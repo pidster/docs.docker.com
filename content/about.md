@@ -9,6 +9,7 @@ title = "about this"
 
 ## This is my about file
 
-This is some content in it.  I'm adding some content to it.
+Meepers. This is some content in it.  I'm adding some content to it.
 
+Moxie Ralph
 
