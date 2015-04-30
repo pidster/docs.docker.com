@@ -3,6 +3,7 @@ MAINTAINER Mary Anthony <mary@docker.com>
 
 RUN apt-get update && apt-get install -y \
 	ca-certificates \
+	inotify-tools\
 	curl \
 	s3cmd \
 	--no-install-recommends
