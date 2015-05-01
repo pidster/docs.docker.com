@@ -1,3 +1,5 @@
+![Docker](images/"underconstruction.jpg")
+
 # Docker Docs on Hugo
 
 This is an opensource, iterative project for redesigning the Docker documentation environment. This environment is used to author both Docker's free, open source platform and Docker's commercial products. The documentationenvironment is composed of:
