@@ -13,7 +13,7 @@ This is an opensource, iterative project for redesigning the Docker documentatio
   </tr>
   <tr>
     <td>Site design</td>
-    <td>The look-and-feel of the documentation as it displays in a website.  Typically, this is the assets used to produce the site.  It also includes ancillary tools and utilities such as source control, search APIs,</td>
+    <td>The look-and-feel of the documentation as it displays in a website.  Typically, this is the assets used to produce the site.  It also includes ancillary tools and utilities such as source control, CMS, and search APIs.</td>
   </tr>
   <tr>
     <td>Build tooling</td>
@@ -35,9 +35,9 @@ This project has the following top-level constraints:
 
 This is a fast-moving project which has implications for both Docker's open source and commercial endeavors. 
 
-Like all Docker open-source projects, this project aims to be visible and accessible. Given the hard constraints, we expect it will be necessary to make decisions without the typical community review.
+Like all Docker open-source projects, this project aims to be transparent and accessible. Given the hard constraints and the cross-over with a company event, we expect it will be necessary to make decisions and take actions in ways that are non-standard with typical Docker OS projects.
 
-This is software though, not stone; we can always revisit and revise later.
+This is *software* though, not **stone**; we can always revisit, refine, and revise later.
 
 ## Project Requirements
 

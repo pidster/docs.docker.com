@@ -30,7 +30,6 @@ The software used to write the documentation.  This includes ancillary tools suc
 - The tooling should be free, easy to learn, easy to use, and widely supported.
 - Documentation source should be kept with the project/product code.
 - Authoring should not require special tools or complex configurations.
-
 - Authors should be able to view a contribution in context of the larger documentation set.
 - Authors should be able to create links between documents in different GitHub projects or products.
 
@@ -41,22 +40,27 @@ The software used to write the documentation.  This includes ancillary tools suc
 
 ### Wishlist items
 
+- Documentation should allow live refresh while authoring
 - Checkin of .md files should be run against a spell checker and return warnings
 - Checkin of .md files should return a warning for a low Fleisch index
 
 ## Site design requirements
 
+The look-and-feel of the documentation as it displays in a website.  Typically, this is the assets used to produce the site.  It also includes ancillary tools and utilities such as source control, CMS, and search APIs.
+
 
 ### Must have requirements
 
-- Documentation should 
+- Documentation should use a look-and-feel that works with the Docker company Site
 
 ### Nice to have requirements
 
 - Display previous versions of the documentation 
+- Embedded, site specific search
 
 ### Wishlist requirements
  
+- pretty print from navigation tree
  
 ## Build tooling
 
@@ -65,10 +69,26 @@ The software and scripts required to compile the documentation source files and 
 ### Must have requirements
 
 - Authors should be able to both preview what they write in the same format as the final website. 
+- Local builds should pull from master documentation across the projects; this applies only to content the author is not working on
 
 ## Nice to have requirements
 
 - Documentation should display well in repository and on a static site.
 
+### Wishlist requirements
+
 
 ## Release tooling
+
+This is the software and scripts used to release the software for public consumption. 
+
+### Must have requirements
+
+- Engineering team should own  the account that has the `docs.docker.com` bucket. 
+
+
+### Nice to have requirements
+
+- `docs/Dockerfile` should build from global release values  
+
+### Wishlist requirements
