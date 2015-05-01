@@ -1,4 +1,4 @@
-![Docker](images/"underconstruction.jpg")
+![Docker](images/underconstruction.jpg)
 
 # Docker Docs on Hugo
 
