@@ -8,16 +8,16 @@ The 1.0 project implementation is due by Dockercon 2015. This page defines the r
     <th>Description</th>
   </tr>
   <tr>
-    <td>**Must Have**</td>
+    <th>Must Have</th>
     <td>Necessary for the project to be a success. </td>
   </tr>
   <tr>
-    <td>**Nice to have**</td>
+    <th>Nice to have</th>
     <td>If implemented, the project exceeds expectations.</td>
   </tr>
   <tr>
-    <td>**Wishlist**</td>
-    <td></td>
+    <th>Wishlist</th>
+    <td>If implemented, someone magical is owed a first-born child of the king.</td>
   </tr>
 </table>
 
