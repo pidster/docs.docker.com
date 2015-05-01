@@ -39,65 +39,19 @@ Like all Docker open-source projects, this project aims to be visible and access
 
 This is software though, not stone; we can always revisit and revise later.
 
-## Project requirements
+## Project Requirements
 
-Given the constraints, we have defined requirements for each component. *Must have* requirements are needed for the project to be a success. **Nice to have** are required to be stellar. And **Wishlist** requirements are not likely.
+See the detailed requirements in [project/REQUIREMENTS.md](project/REQUIREMENTS.md).
 
-### Authoring tooling requirements
+## Run the Project
 
-The software used to write the documentation.  This includes ancillary tools such as spell checkers, grammar checkers, and screenshot tools. 
+Currently, the build is prototyping a simple container with Hugo. We are running various configurations for the larger repo; symlinks, copying, and so forth to see how best to incorporate documentation from sub project documentation.  Hugo is run by hand manually, inside the container for simple troubleshooting.
 
-#### Must have requirements
-
-- The tooling should be free, easy to learn, easy to use, and widely supported.
-- Documentation source should be kept with the project/product code.
-- Authoring should not require special tools or complex configurations.
-
-- Authors should be able to view a contribution in context of the larger documentation set.
-- Authors should be able to create links between documents in different GitHub projects or products.
-
-#### Nice to have requirements
-
-- Code needed to generate from Markdown should not appear in repository display 
-
-
-#### Wishlist items
-
-## Site design requirements
-
-
-#### Must have requirements
-
-- Documentation should 
-
-#### Nice to have requirements
-
-- Display previous versions of the documentation 
-
-#### Wishlist requirements
- 
- 
-### Build tooling
-
-The software and scripts required to compile the documentation source files and make it ready for presentation. Typically, this is a package for generating output from documentation source files. This also includes ancillary tools and utilities such as presentation platforms, and so forth.
-
-#### Must have requirements
-
-- Authors should be able to both preview what they write in the same format as the final website. 
-
-### Nice to have requirements
-
-- Documentation should display well in repository and on a static site.
-
-
-### Release tooling
-
-
-
-Run to build
+To build the Dockerfile:
 
 		docker build --rm --force-rm -t docker:docs .
 
+To run the container and mount the `content` from this project:
 
 		docker run --rm -it -P -v ${PWD}:/usr/src/docs/ docker:docs
 		
