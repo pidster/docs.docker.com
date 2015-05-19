@@ -32,7 +32,7 @@ $(info $(HUGO_BASE_URL) is the hugo base)
 
 GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null)
 DOCKER_IMAGE := docker$(if $(GIT_BRANCH),:$(GIT_BRANCH))
-DOCKER_DOCS_IMAGE := docker-docs-base$(if $(GIT_BRANCH),:$(GIT_BRANCH))
+DOCKER_DOCS_IMAGE := docs.docker.com$(if $(GIT_BRANCH),:$(GIT_BRANCH))
 
 
 DOCKER_RUN_DOCS := docker run --rm -it $(DOCS_MOUNT) -e AWS_S3_BUCKET -e NOCACHE
