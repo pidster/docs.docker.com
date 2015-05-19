@@ -1,7 +1,7 @@
 +++
 title = "Home"
-description = "Installation instructions for Docker on Amazon EC2."
-keywords = ["amazon ec2, virtualization, cloud, docker, documentation,  installation"]
+description = "Home page for Docker's documentation"
+keywords = ["Docker, documentation, manual, guide, reference, api"]
 +++
 
 # Welcome to Docker Documentation
