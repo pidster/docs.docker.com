@@ -1,48 +1,37 @@
 #
 # See the top level Makefile in https://github.com/docker/docker for usage.
 #
-FROM docs-base:hugo-feature-work
+FROM debian:jessie
 MAINTAINER Mary Anthony <mary@docker.com> (@moxiegirl)
 
-# This section ensures we pull the correct version of each
-# sub project
-ENV COMPOSE_BRANCH hugo-work
-ENV SWARM_BRANCH v0.2.0
-ENV MACHINE_BRANCH docs
-ENV DISTRIB_BRANCH docs
-ENV ENGINE_BRANCH uniform-structure
-
-#######################
-# Get Source
-#######################
-WORKDIR /docs/source
-RUN git clone -b ${ENGINE_BRANCH} https://github.com/moxiegirl/docker.git
-RUN git clone -b ${COMPOSE_BRANCH} https://github.com/moxiegirl/compose.git
-
-WORKDIR /docs/source/docker
-RUN git fetch
-RUN git rebase origin/${ENGINE_BRANCH}
-
-WORKDIR /docs/source/compose
-RUN git fetch
-RUN git rebase origin/${COMPOSE_BRANCH}
-
-WORKDIR /docs
-COPY . /docs
-RUN mkdir content/docker
-RUN cp -R source/docker/docs/sources/* content/docker
-
-RUN mkdir content/compose
-RUN cp -R source/compose/docs/* content/compose
-
-#WORKDIR /docs/content
-RUN find . -type f -name "Dockerfile" -delete
-
-WORKDIR /docs
+WORKDIR /src
 EXPOSE 8000
 
+RUN apt-get update \
+	&& apt-get install -y \
+		gettext \
+		git \
+		libssl-dev \
+		make \
+		python-dev \
+		python-pip \
+		python-setuptools \
+		vim-tiny \
+		s3cmd \
+	&& apt-get clean \
+	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+# Required to publish the documentation.
+# The 1.4.4 version works: the current versions fail in different ways
+# TODO: Test to see if the above holds true
+RUN pip install awscli==1.4.4 pyopenssl==0.12
 
+ENV HUGO_VERSION 0.13
+RUN curl -sSL https://github.com/spf13/hugo/releases/download/v0.13/hugo_${HUGO_VERSION}_linux_amd64.tar.gz \
+	| tar -v -C /usr/local/bin -xz --strip-components 1 \
+	&& mv /usr/local/bin/hugo_${HUGO_VERSION}_linux_amd64 /usr/local/bin/hugo
 
+COPY requirements.txt /src/
+RUN pip install -r requirements.txt
 
-
+COPY . /src/
