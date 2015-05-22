@@ -33,8 +33,10 @@ upload:
 serve:
     build: .
     working_dir: /docs
-    command: hugo server -d /public --port 8000 --baseUrl=$HUGO_BASE_URL
+    command: /bin/bash -c "hugo server -d /public --port=8000 --baseUrl=$HUGO_BASE_URL"
     environment:
         - HUGO_BASE_URL
     ports:
         - "8000:8000"
+    volumes_from:
+        - data
