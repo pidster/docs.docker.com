@@ -16,7 +16,7 @@ clean:
 	docker-compose rm -fv
 
 test:
-	echo "not implemented"
+	HUGO_BASE_URL=$(HUGO_BASE_URL) docker-compose up test
 
 serve: fetch
 	HUGO_BASE_URL=$(HUGO_BASE_URL) docker-compose up serve
