@@ -1,19 +1,18 @@
 #!/usr/bin/env python
 
 """ I honestly don't even know how the hell this works, just use it. """
-__author__ = "Scott Stamp <scott@hypermine.com>"
-
 from HTMLParser import HTMLParser
 from urlparse import urljoin
-from sys import setrecursionlimit
+import sys
+import traceback
 import re
 import requests
 
-setrecursionlimit(10000)
-root = 'http://localhost:8000'
+__author__ = "Scott Stamp <scott@hypermine.com>"
 
 
 class DataHolder:
+    match = None
 
     def __init__(self, value=None, attr_name='value'):
         self._attr_name = attr_name
@@ -31,8 +30,6 @@ class DataHolder:
 
 
 class Parser(HTMLParser):
-    global root
-
     ids = set()
     crawled = set()
     anchors = {}
@@ -48,32 +45,50 @@ class Parser(HTMLParser):
         if 'href' in attrs:
             href = attrs['href']
 
-            if re.match('^{0}|\/|\#[\S]{{1,}}'.format(root), href):
-                if self.save_match(re.search('.*\#(.*?)$', href)):
+            if re.match(r'^{0}|\/|\#[\S]{{1,}}'.format(self.origin), href):
+                if self.save_match(re.search(r'.*\#(.*?)$', href)):
                     if self.origin not in self.anchors:
                         self.anchors[self.origin] = set()
                     self.anchors[self.origin].add(
                         self.save_match.match.groups(1)[0])
 
-                url = urljoin(root, href)
+                url = urljoin(self.origin, href)
 
-                if url not in self.crawled and not re.match('^\#', href):
+                if url not in self.crawled and not re.match(r'^\#', href):
                     self.crawled.add(url)
                     Parser(url).feed(requests.get(url).content)
 
         if 'id' in attrs:
             self.ids.add(attrs['id'])
-	# explicit <a name=""></a> references
+        # explicit <a name=""></a> references
         if 'name' in attrs:
             self.ids.add(attrs['name'])
 
 
-r = requests.get(root)
-parser = Parser(root)
-parser.feed(r.content)
-for anchor in sorted(parser.anchors):
-    if not re.match('.*/\#.*', anchor):
-        for anchor_name in parser.anchors[anchor]:
-            if anchor_name not in parser.ids:
-                print 'Missing - ({0}): #{1}'.format(
-                    anchor.replace(root, ''), anchor_name)
+def main(root):
+    sys.setrecursionlimit(10000)
+    r = requests.get(root)
+    parser = Parser(root)
+    parser.feed(r.content)
+    missing = []
+
+    for anchor in sorted(parser.anchors):
+        if not re.match(r'.*/\#.*', anchor):
+            for anchor_name in parser.anchors[anchor]:
+                if anchor_name not in parser.ids:
+                    print 'Missing - ({0}): #{1}'.format(
+                        anchor.replace(root, ''), anchor_name
+                    )
+                    missing.append(anchor_name)
+
+    return not missing
+
+
+if __name__ == '__main__':
+    try:
+        success = main(*sys.argv[1:])
+    except Exception:
+        traceback.print_exc()
+        success = False
+
+    sys.exit(0 if success else 1)
