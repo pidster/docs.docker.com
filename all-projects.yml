@@ -1,0 +1,36 @@
+defaults:
+    org: moxiegirl
+    ref: docs
+    path: docs
+    repo_name: "{name}"
+    name: "{repo_name}"
+    target: "content/{name}"
+    ignores: ['.*/Dockerfile']
+
+projects:
+    - name: docs-base
+      ref: hugo
+      org: docker
+      path: !!null
+      target: .
+
+    - name: docker
+      ref: uniform-structure
+      path: docs/sources/
+
+    # - name: compose
+    #   ref: hugo-work
+    #
+    # - name: swarm
+    #   ref: v0.2.0
+    #
+    # - name: machine
+    #   ref: docs-improvements
+    #
+    # - name: distribution
+    #   ref: hugo-docs
+    #
+    # - name: dhe
+    #   repo_name: dhe-deploy
+    #   ref: master
+    #   path: documentation/
