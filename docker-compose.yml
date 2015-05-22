@@ -1,0 +1,40 @@
+data:
+    image: busybox
+    command: true
+    volumes:
+        - /docs
+        - /public
+
+fetch:
+    build: .
+    command: python fetch_content.py /docs all-projects.yml
+    volumes_from:
+        - data
+    environment:
+        - GITHUB_USERNAME
+        - GITHUB_TOKEN
+
+build:
+    build: .
+    command: hugo -d /public
+    working_dir: /docs
+    volumes_from:
+        - data
+
+upload:
+    build: .
+    working_dir: /public
+    command: s3sync -P . s3://$AWS_S3_BUCKET/
+    environment:
+        - AWS_ACCESS_KEY
+        - AWS_SECRET_KEY
+        - AWS_S3_BUCKET
+
+serve:
+    build: .
+    working_dir: /docs
+    command: hugo server -d /public --port 8000 --baseUrl=$HUGO_BASE_URL
+    environment:
+        - HUGO_BASE_URL
+    ports:
+        - "8000:8000"
