@@ -1,0 +1,63 @@
+data:
+    image: busybox
+    command: "true"
+    volumes:
+        - /docs
+        - /public
+
+fetch:
+    build: .
+    command: python fetch_content.py /docs all-projects.yml
+    volumes_from:
+        - data
+    environment:
+        - GITHUB_USERNAME
+        - GITHUB_TOKEN
+
+build:
+    build: .
+    command: hugo -d /public
+    working_dir: /docs
+    volumes_from:
+        - data
+
+upload:
+    build: .
+    working_dir: /public
+    command: s3sync -P . s3://$AWS_S3_BUCKET/
+    volumes_from:
+        - data
+    environment:
+        - AWS_ACCESS_KEY
+        - AWS_SECRET_KEY
+        - AWS_S3_BUCKET
+
+serve:
+    build: .
+    working_dir: /docs
+    command: /bin/bash -c "hugo server -d /public --port=8000 --baseUrl=$HUGO_BASE_URL"
+    environment:
+        - HUGO_BASE_URL
+    ports:
+        - "8000:8000"
+    volumes_from:
+        - data
+
+test:
+    build: .
+    working_dir: /docs
+    command: |
+        /bin/bash -c " \
+        URL=http://$HUGO_BASE_URL:8000
+        hugo server -d /public --port=8000 --baseUrl=$HUGO_BASE_URL &
+        until curl --fail --silent $URL ; do \
+          sleep 1 ; \
+        done
+        exec python /src/docvalidate.py $URL
+        "
+    environment:
+        - HUGO_BASE_URL
+    ports:
+        - "8000:8000"
+    volumes_from:
+        - data
