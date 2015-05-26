@@ -35,9 +35,10 @@ upload:
 serve:
     build: .
     working_dir: /docs
-    command: /bin/bash -c "hugo server -d /public --port=8000 --baseUrl=$HUGO_BASE_URL"
+    command: /bin/bash -c "hugo server -d /public --port=8000 --baseUrl=$HUGO_BASE_URL --bind=$HUGO_BIND_IP"
     environment:
         - HUGO_BASE_URL
+        - HUGO_BIND_IP
     ports:
         - "8000:8000"
     volumes_from:
@@ -49,7 +50,7 @@ test:
     command: |
         /bin/bash -c " \
         URL=http://$HUGO_BASE_URL:8000
-        hugo server -d /public --port=8000 --baseUrl=$HUGO_BASE_URL &
+        hugo server -d /public --port=8000 --baseUrl=$HUGO_BASE_URL --bind=$HUGO_BIND_IP &
         until curl --fail --silent $URL ; do \
           sleep 1 ; \
         done
@@ -57,6 +58,7 @@ test:
         "
     environment:
         - HUGO_BASE_URL
+        - HUGO_BIND_IP
     ports:
         - "8000:8000"
     volumes_from:
