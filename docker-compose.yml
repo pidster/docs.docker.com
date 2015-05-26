@@ -1,6 +1,6 @@
 data:
     image: busybox
-    command: true
+    command: "true"
     volumes:
         - /docs
         - /public
