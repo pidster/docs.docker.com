@@ -2,7 +2,7 @@
 
 DOCKER_IP=$(shell python -c "import urlparse ; print urlparse.urlparse('$(DOCKER_HOST)').hostname or ''")
 HUGO_BASE_URL=$(shell test -z "$(DOCKER_IP)" && echo localhost || echo "$(DOCKER_IP)")
-DATA_CONTAINER := $(shell docker-compose ps | tail -n +3 | grep data | awk '{print $$1;}' )
+DATA_CONTAINER_CMD=docker-compose ps | tail -n +3 | grep data | awk '{print $$1;}'
 
 default: build-images build
 
@@ -28,7 +28,7 @@ release: build
 	docker-compose up upload
 
 export: build
-	docker cp $(DATA_CONTAINER):/public - | gzip > docs-docker-com.tar.gz
+	docker cp $$($(DATA_CONTAINER_CMD)):/public - | gzip > docs-docker-com.tar.gz
 
 shell: build
 	docker-compose run --rm build /bin/bash
