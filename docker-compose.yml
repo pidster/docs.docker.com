@@ -24,12 +24,12 @@ build:
 upload:
     build: .
     working_dir: /public
-    command: s3sync -P . s3://$AWS_S3_BUCKET/
+    command: aws s3 sync --acl=public-read . s3://$AWS_S3_BUCKET/
     volumes_from:
         - data
     environment:
-        - AWS_ACCESS_KEY
-        - AWS_SECRET_KEY
+        - AWS_ACCESS_KEY_ID
+        - AWS_SECRET_ACCESS_KEY
         - AWS_S3_BUCKET
 
 serve:
