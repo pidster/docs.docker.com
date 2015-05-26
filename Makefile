@@ -1,7 +1,7 @@
 .PHONY: all default build-images fetch clean test serve build release export shell
 
-DOCKER_IP=$(shell python -c "import urlparse ; print urlparse.urlparse('$(DOCKER_HOST)').hostname")
-HUGO_BASE_URL=$(if $(shell echo $(DOCKER_HOST)),$(shell echo $(DOCKER_IP)),$(info localhost))
+DOCKER_IP=$(shell python -c "import urlparse ; print urlparse.urlparse('$(DOCKER_HOST)').hostname or ''")
+HUGO_BASE_URL=$(shell test -z "$(DOCKER_IP)" && echo localhost || echo "$(DOCKER_IP)")
 DATA_CONTAINER := $(shell docker-compose ps | tail -n +3 | grep data | awk '{print $$1;}' )
 
 default: build-images build
