@@ -24,7 +24,7 @@ build:
 upload:
     build: .
     working_dir: /public
-    command: aws s3 sync --acl=public-read . s3://$AWS_S3_BUCKET/
+    command: /bin/bash -c "aws s3 sync --acl=public-read . s3://$AWS_S3_BUCKET/"
     volumes_from:
         - data
     environment:
