@@ -1,35 +1,38 @@
 .PHONY: all default build-images fetch clean test serve build release export shell
 
+PROJECT_NAME ?= docsdockercom
+DOCKER_COMPOSE := docker-compose -p $(PROJECT_NAME)
 DOCKER_IP=$(shell python -c "import urlparse ; print urlparse.urlparse('$(DOCKER_HOST)').hostname or ''")
 HUGO_BASE_URL=$(shell test -z "$(DOCKER_IP)" && echo localhost || echo "$(DOCKER_IP)")
 HUGO_BIND_IP=0.0.0.0
-DATA_CONTAINER_CMD=docker-compose ps | tail -n +3 | grep data | awk '{print $$1;}'
+DATA_CONTAINER_CMD=$(DOCKER_COMPOSE) ps | tail -n +3 | grep data | awk '{print $$1;}'
 
 default: build-images build
 
 build-images:
-	docker-compose build
+	$(DOCKER_COMPOSE) build
 
 fetch:
-	docker-compose up fetch
+	$(DOCKER_COMPOSE) up fetch
 
 clean:
-	docker-compose rm -fv
+	$(DOCKER_COMPOSE) rm -fv ; \
+	docker rmi $$( docker images | grep -E '^$(PROJECT_NAME)_' | awk '{print $$1}' ) 2>/dev/null ||:
 
 test:
-	HUGO_BIND_IP=$(HUGO_BIND_IP) HUGO_BASE_URL=$(HUGO_BASE_URL) docker-compose up test
+	HUGO_BIND_IP=$(HUGO_BIND_IP) HUGO_BASE_URL=$(HUGO_BASE_URL) $(DOCKER_COMPOSE) up test
 
 serve: fetch
-	HUGO_BIND_IP=$(HUGO_BIND_IP) HUGO_BASE_URL=$(HUGO_BASE_URL) docker-compose up serve
+	HUGO_BIND_IP=$(HUGO_BIND_IP) HUGO_BASE_URL=$(HUGO_BASE_URL) $(DOCKER_COMPOSE) up serve
 
 build: fetch
-	docker-compose up build
+	$(DOCKER_COMPOSE) up build
 
 release: build
-	docker-compose up upload
+	$(DOCKER_COMPOSE) up upload
 
 export: build
 	docker cp $$($(DATA_CONTAINER_CMD)):/public - | gzip > docs-docker-com.tar.gz
 
 shell: build
-	docker-compose run --rm build /bin/bash
+	$(DOCKER_COMPOSE) run --rm build /bin/bash
