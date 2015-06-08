@@ -7,7 +7,11 @@ data:
 
 fetch:
     build: .
-    command: python fetch_content.py /docs all-projects.yml
+    command: |
+        /bin/bash -ec " \
+        python fetch_content.py /docs all-projects.yml
+        find /docs -type f -name '*.md' -exec sed -i.old  -e '/^<!.*metadata]>/g' -e '/^<!.*end-metadata.*>/g' {} \;
+        "
     volumes_from:
         - data
     environment:

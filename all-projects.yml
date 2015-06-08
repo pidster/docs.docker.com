@@ -15,8 +15,28 @@ projects:
       target: .
 
     - name: docker
-      ref: uniform-structure
-      path: docs/sources/
+      ref: test-tooling
+      path: docs/
+      
+    - name: compose
+      ref: test-tooling
+      path: docs/
+    
+    - name: swarm
+      ref: test-tooling
+      path: docs/
+
+    - name: machine
+      ref: test-tooling
+      path: docs/
+
+    - name: kitematic
+      ref: test-tooling
+      path: docs/
+
+    - name: distribution
+      ref: test-tooling
+      path: docs/
 
     # - name: compose
     #   ref: hugo-work
