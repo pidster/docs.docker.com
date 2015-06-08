@@ -8,9 +8,9 @@ data:
 fetch:
     build: .
     command: |
-        /bin/bash -c " \
-        exec python fetch_content.py /docs all-projects.yml &
-        exec find /docs -type f -name "*.md" -exec sed -i.old  -e '/^<!.*metadata]>/g' -e '/^<!.*end-metadata.*>/g' {} \;
+        /bin/bash -ec " \
+        python fetch_content.py /docs all-projects.yml
+        find /docs -type f -name '*.md' -exec sed -i.old  -e '/^<!.*metadata]>/g' -e '/^<!.*end-metadata.*>/g' {} \;
         "
     volumes_from:
         - data
@@ -21,7 +21,7 @@ fetch:
 build:
     build: .
     command: hugo -d /public
-    working_dir: /docs/content
+    working_dir: /docs
     volumes_from:
         - data
 
@@ -38,7 +38,7 @@ upload:
 
 serve:
     build: .
-    working_dir: /docs/content
+    working_dir: /docs
     command: /bin/bash -c "hugo server -d /public --port=8000 --baseUrl=$HUGO_BASE_URL --bind=$HUGO_BIND_IP"
     environment:
         - HUGO_BASE_URL
