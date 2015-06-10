@@ -10,7 +10,7 @@ fetch:
     command: |
         /bin/bash -ec " \
         python fetch_content.py /docs all-projects.yml
-        find /docs -type f -name '*.md' -exec sed -i.old  -e '/^<!.*metadata]>/g' -e '/^<!.*end-metadata.*>/g' {} \;
+        ./touch-up.sh /docs
         "
     volumes_from:
         - data
