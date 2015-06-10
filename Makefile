@@ -6,6 +6,13 @@ DOCKER_IP = $(shell python -c "import urlparse ; print urlparse.urlparse('$(DOCK
 HUGO_BASE_URL = $(shell test -z "$(DOCKER_IP)" && echo localhost || echo "$(DOCKER_IP)")
 HUGO_BIND_IP = 0.0.0.0
 DATA_CONTAINER_CMD = $(DOCKER_COMPOSE) ps -q data | head -n 1
+RELEASE_LATEST ?=
+
+ifndef RELEASE_LATEST
+	DOCS_VERSION = $(shell cat VERSION)
+else
+	DOCS_VERSION =
+endif
 
 default: build-images build
 
@@ -26,10 +33,10 @@ serve: fetch
 	HUGO_BIND_IP=$(HUGO_BIND_IP) HUGO_BASE_URL=$(HUGO_BASE_URL) $(DOCKER_COMPOSE) up serve
 
 build: fetch
-	$(DOCKER_COMPOSE) up build
+	DOCS_VERSION=$(DOCS_VERSION) $(DOCKER_COMPOSE) up build
 
 release: build
-	$(DOCKER_COMPOSE) up upload
+	CLEAN=$(DOCS_VERSION) $(DOCKER_COMPOSE) up upload
 
 export: build
 	docker cp $$($(DATA_CONTAINER_CMD)):/public - | gzip > docs-docker-com.tar.gz
