@@ -2,10 +2,10 @@
 
 PROJECT_NAME ?= docsdockercom
 DOCKER_COMPOSE := docker-compose -p $(PROJECT_NAME)
-DOCKER_IP=$(shell python -c "import urlparse ; print urlparse.urlparse('$(DOCKER_HOST)').hostname or ''")
-HUGO_BASE_URL=$(shell test -z "$(DOCKER_IP)" && echo localhost || echo "$(DOCKER_IP)")
-HUGO_BIND_IP=0.0.0.0
-DATA_CONTAINER_CMD=$(DOCKER_COMPOSE) ps | tail -n +3 | grep data | awk '{print $$1;}'
+DOCKER_IP = $(shell python -c "import urlparse ; print urlparse.urlparse('$(DOCKER_HOST)').hostname or ''")
+HUGO_BASE_URL = $(shell test -z "$(DOCKER_IP)" && echo localhost || echo "$(DOCKER_IP)")
+HUGO_BIND_IP = 0.0.0.0
+DATA_CONTAINER_CMD = $(DOCKER_COMPOSE) ps -q data | head -n 1
 
 default: build-images build
 
