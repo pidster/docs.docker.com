@@ -10,7 +10,7 @@ fetch:
     command: |
         /bin/bash -ec " \
         python fetch_content.py /docs all-projects.yml
-        find /docs -type f -name '*.md' -exec sed -i.old  -e '/^<!.*metadata]>/g' -e '/^<!.*end-metadata.*>/g' {} \;
+        ./touch-up.sh /docs
         "
     volumes_from:
         - data
@@ -20,18 +20,27 @@ fetch:
 
 build:
     build: .
-    command: hugo -d /public
+    command: /bin/bash -ec "hugo -d /public/$DOCS_VERSION"
     working_dir: /docs
     volumes_from:
         - data
+    environment:
+        - DOCS_VERSION
 
 upload:
     build: .
     working_dir: /public
-    command: /bin/bash -c "aws s3 sync --acl=public-read . s3://$AWS_S3_BUCKET/"
+    command: |
+        /bin/bash -c " \
+        if [ -n "$CLEAN" ] ; then
+          aws s3 rm --recursive s3://$AWS_S3_BUCKET/$CLEAN
+        fi
+        aws s3 sync --acl=public-read . s3://$AWS_S3_BUCKET
+        "
     volumes_from:
         - data
     environment:
+        - CLEAN
         - AWS_ACCESS_KEY_ID
         - AWS_SECRET_ACCESS_KEY
         - AWS_S3_BUCKET
