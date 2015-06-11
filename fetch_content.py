@@ -3,8 +3,10 @@ import re
 import io
 import os.path
 import tarfile
-import pprint
 import yaml
+import json
+
+import sarge
 import requests
 
 
@@ -48,17 +50,48 @@ def load_projects(fname):
     return projects
 
 
-def fetch_project(destination, org, repo_name, name, ref, path, ignores=None, target=None):
-    url = 'https://github.com/{org}/{repo_name}/archive/{ref}.tar.gz'.format(
-        org=org, repo_name=repo_name, ref=ref
+def gather_local_git_info():
+    remote_names = sarge.capture_stdout('git remote show').stdout.text.splitlines()
+    remote_urls = [
+        sarge.capture_stdout('git ls-remote --get-url {}'.format(name)).stdout.text.strip()
+        for name in remote_names
+    ]
+
+    return dict(
+        repos=remote_urls,
+        ref=sarge.capture_stdout('git rev-parse --symbolic-full-name HEAD').stdout.text.strip(),
+        sha=sarge.capture_stdout('git rev-parse HEAD').stdout.text.strip()
     )
 
+
+def gather_git_info(org, repo_name, ref):
+    info = dict(
+        org=org,
+        repo_name=repo_name,
+        ref=ref
+    )
+
+    commit_info = requests.get(
+        'https://api.github.com/repos/{org}/{repo_name}/commits/{ref}'.format(**info),
+        auth=(os.environ['GITHUB_USERNAME'], os.environ['GITHUB_TOKEN']),
+    ).json()
+
+    info['sha'] = commit_info['sha']
+    info['archive_url'] = 'https://github.com/{org}/{repo_name}/archive/{sha}.tar.gz'.format(**info)
+    info['repos'] = ['git@github.com:{org}/{repo_name}.git'.format(**info)]
+    info.pop('org')
+    info.pop('repo_name')
+
+    return info
+
+
+def fetch_project(destination, org, repo_name, name, ref, path, ignores=None, target=None):
+    git_info = gather_git_info(org, repo_name, ref)
+    archive_url = git_info.pop('archive_url')
+
     resp = requests.get(
-        url,
-        auth=requests.auth.HTTPBasicAuth(
-            os.environ['GITHUB_USERNAME'],
-            os.environ['GITHUB_TOKEN']
-        ),
+        archive_url,
+        auth=(os.environ['GITHUB_USERNAME'], os.environ['GITHUB_TOKEN']),
         stream=True
     )
 
@@ -104,6 +137,8 @@ def fetch_project(destination, org, repo_name, name, ref, path, ignores=None, ta
         with open(target_path, 'wb') as f:
             f.write(tgz.extractfile(tar_info).read())
 
+    return git_info
+
 
 def main(destination, projects_file=None):
     destination = os.path.normpath(destination)
@@ -114,8 +149,21 @@ def main(destination, projects_file=None):
         # projects = [LocalProject('.', 'docs')]
         raise NotImplementedError
 
+    build_info = {}
     for project in projects:
-        fetch_project(destination, **project)
+        proj_git_info = fetch_project(destination, **project)
+        build_info['{org}/{name}'.format(**project)] = proj_git_info
+
+    build_info['docs.docker.com'] = gather_local_git_info()
+
+    with open(os.path.join(destination, 'build.json'), 'w') as f:
+        f.write(json.dumps(
+            build_info,
+            sort_keys=True,
+            indent=4,
+            separators=(',', ': ')
+        ))
+
 
 if __name__ == '__main__':
     main(*sys.argv[1:])
