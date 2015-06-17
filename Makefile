@@ -9,7 +9,7 @@ DATA_CONTAINER_CMD = $(DOCKER_COMPOSE) ps -q data | head -n 1
 RELEASE_LATEST ?=
 
 ifndef RELEASE_LATEST
-	DOCS_VERSION = $(shell cat VERSION)
+	DOCS_VERSION = $(shell cat VERSION | head -n1 | awk '{print $$1}')
 else
 	DOCS_VERSION =
 endif
