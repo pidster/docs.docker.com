@@ -31,12 +31,12 @@ upload:
     build: .
     working_dir: /public
     command: |
-        /bin/bash -c " \
+        /bin/bash -c ' \
         if [ -n "$CLEAN" ] ; then
           aws s3 rm --recursive s3://$AWS_S3_BUCKET/$CLEAN
         fi
         aws s3 sync --acl=public-read . s3://$AWS_S3_BUCKET
-        "
+        '
     volumes_from:
         - data
     environment:
