@@ -20,7 +20,7 @@ build-images:
 	$(DOCKER_COMPOSE) build ; \
 	CONTAINER_ID=$$( $(DOCKER_COMPOSE) run -d fetch true) ; \
 	until IMAGE_NAME=$$( docker inspect -f "{{ .Config.Image }}" "$$CONTAINER_ID" ) && [ -n "$$IMAGE_NAME" ] ; do echo "sleep $$CONTAINER_ID" ; sleep 1; done ; \
-	docker tag "$$IMAGE_NAME" "$(PROJECT_NAME):latest" ; \
+	docker tag -f "$$IMAGE_NAME" "$(PROJECT_NAME):latest" ; \
 	docker rm -f "$$CONTAINER_ID" >/dev/null
 
 fetch:
