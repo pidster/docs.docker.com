@@ -1,5 +1,5 @@
 defaults:
-    org: moxiegirl
+    org: docker
     ref: docs
     path: docs
     repo_name: "{name}"
@@ -14,36 +14,34 @@ projects:
       path: !!null
       target: .
 
-    - name: docker-trusted-registry
-      repo_name: dhe-deploy
-      ref: hugo-test-fixes
-      path: docs/      
-
     - name: docker
-      org: moxiegirl          
-      ref: hugo-test-fixes
+      ref: docs
       path: docs/
+      
+    - name: docker-hub-enterprise
+      repo_name: dhe-deploy   
+      ref: docs1.0
+      path: docs/        
       
     - name: registry
       repo_name: distribution   
-      ref: hugo-test-fixes
+      ref: master
       path: docs/     
       
     - name: kitematic
-      org: moxiegirl      
-      ref: hugo-test-fixes
+      ref: master
       path: docs/
 
     - name: compose
-      ref: hugo-test-fixes
+      ref: release
       path: docs/
     
     - name: swarm
-      ref: hugo-test-fixes
+      ref: master
       path: docs/
 
     - name: machine
-      ref: hugo-test-fixes
+      ref: master
       path: docs/   
       
     - name: opensource
