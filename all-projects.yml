@@ -14,43 +14,40 @@ projects:
       path: !!null
       target: .
 
+    - name: docker-trusted-registry
+      repo_name: dhe-deploy
+      ref: hugo-test-fixes
+      path: docs/      
+
     - name: docker
-      ref: test-tooling
+      org: moxiegirl          
+      ref: hugo-test-fixes
       path: docs/
       
+    - name: registry
+      repo_name: distribution   
+      ref: hugo-test-fixes
+      path: docs/     
+      
+    - name: kitematic
+      org: moxiegirl      
+      ref: hugo-test-fixes
+      path: docs/
+
     - name: compose
-      ref: test-tooling
+      ref: hugo-test-fixes
       path: docs/
     
     - name: swarm
-      ref: test-tooling
+      ref: hugo-test-fixes
       path: docs/
 
     - name: machine
-      ref: test-tooling
-      path: docs/
+      ref: hugo-test-fixes
+      path: docs/   
+      
+    - name: opensource
+      ref: master
+      path: docs/             
 
-    - name: kitematic
-      ref: test-tooling
-      path: docs/
-
-    - name: distribution
-      ref: test-tooling
-      path: docs/
-
-    # - name: compose
-    #   ref: hugo-work
-    #
-    # - name: swarm
-    #   ref: v0.2.0
-    #
-    # - name: machine
-    #   ref: docs-improvements
-    #
-    # - name: distribution
-    #   ref: hugo-docs
-    #
-    # - name: dhe
-    #   repo_name: dhe-deploy
-    #   ref: master
-    #   path: documentation/
+   

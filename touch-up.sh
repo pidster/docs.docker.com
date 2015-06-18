@@ -4,6 +4,14 @@ DOCS_DIR=$( dirname $( find /docs -name 'build.json' | head -n1 ) )
 BUILD_JSON="${DOCS_DIR}/build.json"
 BUILDINFO_PARTIAL="${DOCS_DIR}/layouts/partials/buildinfo.html"
 
+for i in ls -l /docs/content/docker/*
+  do                 
+    if [ -d $i ]    
+      then
+        mv $i /docs/content/  
+      fi
+done
+
 # Sed to process GitHub Markdown
 # 1-2 Remove comment code from metadata block
 # 3 Remove .md extension from link text
@@ -18,12 +26,14 @@ for i in ls -l /docs/content/*
       then
         y=${i##*/}
         find $i -type f -name "*.md" -exec sed -i.old \
-            -e '/^<!.*metadata]>/g' \
-            -e '/^<!.*end-metadata.*>/g' \
-            -e 's/\([(]\)\(.*\)\(\.md\)/\1\2/g' \
-            -e 's/\(\]\)\([(]\)\(\/\)/\1\2\/'$y'\//g' \
-            -e 's/\(\][(]\)\([A-z]*[)]\)/\]\(\/'$y'\/\2/g' \
-            -e 's/\(\][(]\)\(\.\.\/\)/\1\/'$y'\//g' {} \;    
+    -e '/^<!.*metadata]>/g' \
+    -e '/^<!.*end-metadata.*>/g' \
+    -e 's/\(\]\)\([(]\)\(\/\)/\1\2\/'$y'\//g' \
+    -e 's/\(\][(]\)\([A-z].*\)\(\.md\)/\1\/'$y'\/\2/g' \
+    -e 's/\([(]\)\(.*\)\(\.md\)/\1\2/g'  \
+    -e 's/\(\][(]\)\(\.\/\)/\1\/'$y'\//g' \
+    -e 's/\(\][(]\)\(\.\.\/\.\.\/\)/\1\/'$y'\//g' \
+    -e 's/\(\][(]\)\(\.\.\/\)/\1\/'$y'\//g' {} \;
       fi
 done
 
