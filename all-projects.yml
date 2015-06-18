@@ -12,7 +12,7 @@ projects:
       ref: hugo
       org: docker
       path: !!null
-      target: .
+      target: .  
 
     - name: docker
       ref: docs
@@ -29,23 +29,24 @@ projects:
       path: docs/     
       
     - name: kitematic
+      org: kitematic
       ref: master
       path: docs/
 
     - name: compose
-      ref: release
+      ref: docs
       path: docs/
     
     - name: swarm
-      ref: master
+      ref: docs
       path: docs/
 
     - name: machine
-      ref: master
+      ref: docs
       path: docs/   
       
     - name: opensource
       ref: master
-      path: docs/             
+      path: docs/                   
 
    
