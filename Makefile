@@ -1,4 +1,4 @@
-.PHONY: all default build-images fetch clean test serve build release export shell
+.PHONY: all default build-images fetch clean clean-bucket test serve build release export shell
 
 PROJECT_NAME ?= docsdockercom
 DOCKER_COMPOSE := docker-compose -p $(PROJECT_NAME)
@@ -29,6 +29,9 @@ fetch:
 clean:
 	$(DOCKER_COMPOSE) rm -fv ; \
 	docker rmi $$( docker images | grep -E '^$(PROJECT_NAME)_' | awk '{print $$1}' ) 2>/dev/null ||:
+
+clean-bucket:
+	RM_OLDER_THAN="$(RM_OLDER_THAN)" $(DOCKER_COMPOSE) run --rm cleanup
 
 serve: fetch
 	HUGO_BIND_IP=$(HUGO_BIND_IP) HUGO_BASE_URL=$(HUGO_BASE_URL) $(DOCKER_COMPOSE) up serve
