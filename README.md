@@ -29,15 +29,15 @@ This project is builds and releases the documentation for all of Docker &ndash; 
     
 4. Edit the `all-projects.yml` file and configure one or more `projects` to build.
 
-      | Value       | Description                                                                                                             |
-      |-------------|-------------------------------------------------------------------------------------------------------------------------|
-      | `org`       | GitHub username or team name.                                                                                           |
-      | `ref`       | Branch or tag name.                                                                                                     |
-      | `path`      | Location in repository to pull from.  To pull an entire repository from the root directory, specify `!!null` as a path. |
-      | `repo_name` | The name of the repository to pull. If you don't specify this value, then you must specify `name`.                      |
-      | `name`      | Name of the destination directory in the container. The build system copies into a folder by this name.                 |
-      | `target`    | The subdirectory in the container the build creates so the build creates `target`/`name` in the container.              |
-      | `ignores`   | Specifies files / folders to ignore.                                                                                    |
+    | Value       | Description                                                                                                             |
+    |-------------|-------------------------------------------------------------------------------------------------------------------------|
+    | `org`       | GitHub username or team name.                                                                                           |
+    | `ref`       | Branch or tag name.                                                                                                     |
+    | `path`      | Location in repository to pull from.  To pull an entire repository from the root directory, specify `!!null` as a path. |
+    | `repo_name` | The name of the repository to pull. If you don't specify this value, then you must specify `name`.                      |
+    | `name`      | Name of the destination directory in the container. The build system copies into a folder by this name.                 |
+    | `target`    | The subdirectory in the container the build creates so the build creates `target`/`name` in the container.              |
+    | `ignores`   | Specifies files / folders to ignore.                                                                                    |
 
 5. Set your environment variables
 
