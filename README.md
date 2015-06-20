@@ -31,7 +31,7 @@ This project is builds and releases the documentation for all of Docker &ndash; 
 
     | Value       | Description                                                                                                             |
     |-------------|-------------------------------------------------------------------------------------------------------------------------|
-    | `org`       | GitHub username or team name.                                                                                           |
+    | `org`       | GitHub username or team name owning the repo.                                                                                           |
     | `ref`       | Branch or tag name.                                                                                                     |
     | `path`      | Location in repository to pull from.  To pull an entire repository from the root directory, specify `!!null` as a path. |
     | `repo_name` | The name of the repository to pull. If you don't specify this value, then you must specify `name`.                      |
@@ -39,6 +39,39 @@ This project is builds and releases the documentation for all of Docker &ndash; 
     | `target`    | The subdirectory in the container the build creates so the build creates `target`/`name` in the container.              |
     | `ignores`   | Specifies files / folders to ignore.                                                                                    |
 
+  Any values that are common across all projects, add to the `defaults` block.
+  For example, these `defaults` indicate all the repos you intend to build
+  belong to `docker`.
+  
+      defaults:
+          org: docker
+          ref: docs
+          path: docs
+          repo_name: "{name}"
+          name: "{repo_name}"
+          target: "content/{name}"
+          ignores: ['.*/Dockerfile']
+
+      projects:
+          - name: docs-base
+            ref: hugo
+            org: docker
+            path: !!null
+            target: .
+
+          - name: docker
+            ref: docs
+            path: docs/
+
+  You can override the defaults on any entry. This specifies to build the
+  `hugo-test-fixes` branch belonging to the `https://github.com/moxiegirl/docker`
+  fork:
+  
+          - name: docker
+            orgh: moxiegirl
+            ref: hugo-test-fixes
+            path: docs/
+            
 5. Set your environment variables
 
         $ export AWS_ACCESS_KEY_ID=AKIAIKGKXQ3QTG3QY1SY
