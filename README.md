@@ -72,7 +72,10 @@ This project is builds and releases the documentation for all of Docker &ndash; 
             ref: hugo-test-fixes
             path: docs/
             
-5. Set your environment variables
+5. Set your environment variables.
+
+  These specify the location of the bucket to build to and the access creds. You
+  also must supply your GitHub username and access token.
 
         $ export AWS_ACCESS_KEY_ID=AKIAIKGKXQ3QTG3QY1SY
         $ export AWS_SECRET_ACCESS_KEY=qFlobtw3yYXdtEppahJAZKoNcDUXleTKB23kFR6c
@@ -90,11 +93,15 @@ This project is builds and releases the documentation for all of Docker &ndash; 
 
         $ make build-images
 
-8. Release to the subfolder (created if it doesn't exist).
+8. Run the server locally to test and review your changes.
+
+        $ make serve
+
+9. Release to the subfolder (created if it doesn't exist).
 
         $ make release     
         
-9. Optionally, check for new or updated bucket.
+10. Optionally, check for new or updated bucket.
 
         $ aws s3 ls s3://$AWS_S3_BUCKET/
                                    PRE article-img/
@@ -109,6 +116,8 @@ This project is builds and releases the documentation for all of Docker &ndash; 
                                    PRE v1.7/
                                    PRE windows/
 
-10. Upload the content to the bucket root.
+11. Upload the content to the bucket root.
 
         $ RELEASE_LATEST=1 make release 
+
+
