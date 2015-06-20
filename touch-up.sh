@@ -21,8 +21,20 @@ content_dir=(`ls -d /docs/content/*`)
 for i in "${content_dir[@]}"
 do
    :
-    if [ -d $i ] && [ "$i" != "/docs/content/docker" ] # not docker
-      then
+   case $i in
+      "/docs/content/windows")
+      ;;
+      "/docs/content/mac")
+      ;;
+      "/docs/content/linux")
+      ;;
+      "/docs/content/docker")
+         y=${i##*/}
+         find $i -type f -name "*.md" -exec sed -i.old \
+         -e '/^<!.*metadata]>/g' \
+         -e '/^<!.*end-metadata.*>/g' {} \;
+      ;;
+      *)
         y=${i##*/}
         find $i -type f -name "*.md" -exec sed -i.old \
         -e '/^<!.*metadata]>/g' \
@@ -33,15 +45,8 @@ do
         -e 's/\(\][(]\)\(\.\/\)/\1\/'$y'\//g' \
         -e 's/\(\][(]\)\(\.\.\/\.\.\/\)/\1\/'$y'\//g' \
         -e 's/\(\][(]\)\(\.\.\/\)/\1\/'$y'\//g' {} \;
-      else   #do this in docker
-         if [ "$i" = "/docs/content/docker" ] #do this in docker
-            then
-              y=${i##*/}
-              find $i -type f -name "*.md" -exec sed -i.old \
-                -e '/^<!.*metadata]>/g' \
-                -e '/^<!.*end-metadata.*>/g' {} \;
-          fi
-      fi
+      ;;
+      esac
 done
 
 #
@@ -55,6 +60,8 @@ do
         mv $i /docs/content/ 
       fi
 done
+
+
 
 # Substitute in the build data in the buildinfo partial
 sed "/BUILD_DATA/r $BUILD_JSON" "$BUILDINFO_PARTIAL" | sed '/BUILD_DATA/d' > "${BUILDINFO_PARTIAL}.out" \
