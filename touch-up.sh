@@ -63,7 +63,6 @@ done
 
 rm -rf /docs/content/docker
 
-
 # Substitute in the build data in the buildinfo partial
 sed "/BUILD_DATA/r $BUILD_JSON" "$BUILDINFO_PARTIAL" | sed '/BUILD_DATA/d' > "${BUILDINFO_PARTIAL}.out" \
     && mv "${BUILDINFO_PARTIAL}.out" "${BUILDINFO_PARTIAL}"
