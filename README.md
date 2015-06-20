@@ -49,7 +49,9 @@ This project is builds and releases the documentation for all of Docker &ndash; 
     
   The above are example values of course. You'll need to use valid values to publish.  
     
-6. Clean any old images `make clean` from your system.
+6. Clean any old images from previous passes.
+
+        $ make clean
 
 7. Build the necessary images used by the system.
 
