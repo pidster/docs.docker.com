@@ -8,8 +8,7 @@ This project is builds and releases the documentation for all of Docker &ndash; 
  private repo, the build system requires your GitHub username and an access
  token. If you don't have an access token, you can create one by following
  [Creating an access token for command-line
- use](https://help.github.com/articles/creating-an-access-token-for-command-line
- -use/).
+ use](https://help.github.com/articles/creating-an-access-token-for-command-line-use/).
    
  Your system should have a recent installation of both Docker Engine and Docker
  Compose.  See the [installation procedures](http://docs.docker.com/) for
