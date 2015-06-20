@@ -17,7 +17,7 @@ This project is builds and releases the documentation for all of Docker &ndash; 
  Finally, it is convenient to have the [AWS command line
  tools](http://aws.amazon.com/cli/) installed. This is not required though.
 
-## Quickstart publish 
+## Quickstart publish docs
 
 1. Clone the `docs.docker.com` repository.
     
@@ -72,18 +72,20 @@ This project is builds and releases the documentation for all of Docker &ndash; 
             ref: hugo-test-fixes
             path: docs/
             
-5. Set your environment variables.
+5. Set your GitHub credentials: these are required. 
 
-  These specify the location of the bucket to build to and the access creds. You
-  also must supply your GitHub username and access token.
-
+        $ export GITHUB_USERNAME=moxiegirl
+        $ export GITHUB_TOKEN=1077107f8a57cec307f7355a1ac22ecc4d5223dc
+        
+  The above are example values of course. 
+        
+6. If you are publishing externally, specify the location of the bucket to build to and the access creds. 
+  
         $ export AWS_ACCESS_KEY_ID=AKIAIKGKXQ3QTG3QY1SY
         $ export AWS_SECRET_ACCESS_KEY=qFlobtw3yYXdtEppahJAZKoNcDUXleTKB23kFR6c
         $ export AWS_S3_BUCKET=docs-manthony
-        $ export GITHUB_USERNAME=moxiegirl
-        $ export GITHUB_TOKEN=1077107f8a57cec307f7355a1ac22ecc4d5223dc
-    
-  The above are example values of course. You'll need to use valid values to publish.  
+      
+    The above are example values of course. You'll need to use valid values to publish.  
     
 6. Clean any old images from previous passes.
 
