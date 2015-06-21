@@ -39,15 +39,15 @@ projects:
       path: docs/
 
     - name: compose
-      ref: docs
+      ref: master
       path: docs/
     
     - name: swarm
-      ref: docs
+      ref: master
       path: docs/
 
     - name: machine
-      ref: docs
+      ref: master
       path: docs/   
       
     - name: opensource
