@@ -61,6 +61,7 @@ do
       fi
 done
 
+rm -rf /docs/content/docker
 
 
 # Substitute in the build data in the buildinfo partial
