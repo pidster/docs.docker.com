@@ -39,7 +39,7 @@ projects:
       path: docs/
 
     - name: compose
-      ref: master
+      ref: docs
       path: docs/
     
     - name: swarm
