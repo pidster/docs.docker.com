@@ -9,29 +9,24 @@ defaults:
 
 projects:
     - name: docs-base
-      ref: hugo
       org: docker
+      ref: hugo
       path: !!null
       target: .  
-
-    - name: tutorials
-      ref: master
-      path: docs/
-      target: content
       
     - name: docker
       ref: docs
       path: docs/
       
-    - name: docker-hub-enterprise
+    - name: docker-trusted-registry
       repo_name: dhe-deploy   
-      ref: docs1.0
-      path: docs/        
+      ref: master
+      path: docs/     
       
     - name: registry
       repo_name: distribution   
       ref: master
-      path: docs/     
+      path: docs/    
       
     - name: kitematic
       org: kitematic
@@ -53,3 +48,7 @@ projects:
     - name: opensource
       ref: master
       path: docs/                   
+
+    - name: tutorials
+      ref: master
+      path: docs/
