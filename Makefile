@@ -36,7 +36,7 @@ build: fetch
 
 release: build
 	[ -n "$(HUGO_BASE_URL_AUTO)" ] && echo "Set HUGO_BASE_URL to release" && exit 1 ; \
-	HUGO_BASE_URL=$(HUGO_BASE_URL) DOCS_VERSION=$(DOCS_VERSION) $(DOCKER_COMPOSE) up upload
+	LATEST=$(LATEST) HUGO_BASE_URL=$(HUGO_BASE_URL) DOCS_VERSION=$(DOCS_VERSION) $(DOCKER_COMPOSE) up upload
 
 export: build
 	docker cp $$($(DATA_CONTAINER_CMD)):/public - | gzip > docs-docker-com.tar.gz

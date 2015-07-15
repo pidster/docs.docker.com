@@ -42,10 +42,16 @@ upload:
         [ -z "$AWS_S3_BUCKET" ]         && echo "AWS_S3_BUCKET is not set" >&2         && exit 1
 
         aws s3 sync --exact-timestamps --delete --acl=public-read "./$DOCS_VERSION" "s3://$AWS_S3_BUCKET/$DOCS_VERSION"
+        if [ -n "$LATEST" ] ; then
+          rm -rf latest
+          cp -R "$DOCS_VERSION" latest
+          aws s3 sync --exact-timestamps --delete --acl=public-read ./latest "s3://$AWS_S3_BUCKET/latest"
+        fi
         '
     volumes_from:
         - data
     environment:
+        - LATEST
         - DOCS_VERSION
         - AWS_ACCESS_KEY_ID
         - AWS_SECRET_ACCESS_KEY
