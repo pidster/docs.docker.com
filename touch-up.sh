@@ -22,6 +22,10 @@ for i in "${content_dir[@]}"
 do
    :
    case $i in
+      "/docs/content/docker-trusted-registry")
+      ;;
+      "/docs/content/docker-hub")
+      ;;
       "/docs/content/windows")
       ;;
       "/docs/content/mac")

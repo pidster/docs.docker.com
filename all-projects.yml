@@ -15,22 +15,28 @@ projects:
       target: .  
       
     - name: docker
+      org: docker
       ref: docs
       path: docs/
       
+    - name: docker-hub
+      repo_name: hub2-demo   
+      ref: master
+      path: docs/    
+      
     - name: docker-trusted-registry
       repo_name: dhe-deploy   
-      ref: master
+      ref: docs
       path: docs/     
       
     - name: registry
       repo_name: distribution   
-      ref: master
+      ref: docs
       path: docs/    
       
     - name: kitematic
       org: kitematic
-      ref: master
+      ref: docs
       path: docs/
 
     - name: compose
@@ -38,11 +44,11 @@ projects:
       path: docs/
     
     - name: swarm
-      ref: master
+      ref: docs
       path: docs/
 
     - name: machine
-      ref: master
+      ref: docs
       path: docs/   
       
     - name: opensource
@@ -50,5 +56,6 @@ projects:
       path: docs/                   
 
     - name: tutorials
-      ref: master
+      ref: docs
+      target: content
       path: docs/
