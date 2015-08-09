@@ -10,13 +10,14 @@ defaults:
 projects:
     - name: docs-base
       org: docker
-      ref: hugo
+      ref: master
       path: !!null
       target: .  
       
     - name: docker
       org: docker
       ref: docs
+      target: content/
       path: docs/
       
     - name: docker-hub
@@ -31,12 +32,12 @@ projects:
       
     - name: registry
       repo_name: distribution   
-      ref: docs
+      ref: master
       path: docs/    
       
     - name: kitematic
       org: kitematic
-      ref: docs
+      ref: master
       path: docs/
 
     - name: compose
@@ -56,6 +57,6 @@ projects:
       path: docs/                   
 
     - name: tutorials
-      ref: docs
+      ref: master
       target: content
       path: docs/
