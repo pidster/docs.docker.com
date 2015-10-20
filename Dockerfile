@@ -35,10 +35,10 @@ ADD https://github.com/docker/hugo/releases/download/test-2/hugo /usr/local/bin/
 RUN chmod 755 /usr/local/bin/hugo
 RUN /usr/local/bin/hugo version
 
-ADD https://github.com/SvenDowideit/markdownlint/releases/download/test-1/markdownlint /usr/local/bin/markdownlint
+ADD https://github.com/docker/markdownlint/releases/download/v0.1/markdownlint /usr/local/bin/markdownlint
 RUN chmod 755 /usr/local/bin/markdownlint
 
-ADD https://github.com/SvenDowideit/linkcheck/releases/download/test-1/linkcheck /usr/local/bin/linkcheck
+ADD https://github.com/docker/linkcheck/releases/download/v0.1/linkcheck /usr/local/bin/linkcheck
 RUN chmod 755 /usr/local/bin/linkcheck
 
 COPY requirements.txt /src/
