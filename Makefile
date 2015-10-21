@@ -2,6 +2,7 @@
 
 PROJECT_NAME ?= docsdockercom
 DOCKER_COMPOSE := docker-compose -p $(PROJECT_NAME)
+DOCKER_IMAGE := docsdockercom:latest
 DOCKER_IP = $(shell python -c "import urlparse ; print urlparse.urlparse('$(DOCKER_HOST)').hostname or ''")
 HUGO_BASE_URL = $(shell test -z "$(DOCKER_IP)" && echo localhost || echo "$(DOCKER_IP)")
 HUGO_BIND_IP = 0.0.0.0
@@ -17,11 +18,7 @@ endif
 default: build-images build
 
 build-images:
-	$(DOCKER_COMPOSE) build ; \
-	CONTAINER_ID=$$( $(DOCKER_COMPOSE) run -d fetch true) ; \
-	until IMAGE_NAME=$$( docker inspect -f "{{ .Config.Image }}" "$$CONTAINER_ID" ) && [ -n "$$IMAGE_NAME" ] ; do echo "sleep $$CONTAINER_ID" ; sleep 1; done ; \
-	docker tag -f "$$IMAGE_NAME" "$(PROJECT_NAME):latest" ; \
-	docker rm -f "$$CONTAINER_ID" >/dev/null
+	docker build -t $(DOCKER_IMAGE) .
 
 fetch:
 	$(DOCKER_COMPOSE) up fetch
