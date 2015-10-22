@@ -38,7 +38,7 @@ RUN /usr/local/bin/hugo version
 ADD https://github.com/docker/markdownlint/releases/download/v0.1/markdownlint /usr/local/bin/markdownlint
 RUN chmod 755 /usr/local/bin/markdownlint
 
-ADD https://github.com/docker/linkcheck/releases/download/v0.1/linkcheck /usr/local/bin/linkcheck
+ADD https://github.com/docker/linkcheck/releases/download/v0.3/linkcheck /usr/local/bin/linkcheck
 RUN chmod 755 /usr/local/bin/linkcheck
 
 COPY requirements.txt /src/

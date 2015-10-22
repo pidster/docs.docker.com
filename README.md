@@ -84,7 +84,7 @@ This project is builds and releases the documentation for all of Docker &ndash; 
         $ export AWS_ACCESS_KEY_ID=AKIAIKGKXQ3QTG3QY1SY
         $ export AWS_SECRET_ACCESS_KEY=qFlobtw3yYXdtEppahJAZKoNcDUXleTKB23kFR6c
         $ export AWS_S3_BUCKET=docs-manthony
-        $ export HOSTNAME=mary.docs.test.s3-website-us-west-2.amazonaws.com
+        $ export S3HOSTNAME=mary.docs.test.s3-website-us-west-2.amazonaws.com
       
     The above are example values of course. You'll need to use valid values to publish.  
     

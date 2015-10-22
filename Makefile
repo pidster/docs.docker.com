@@ -30,7 +30,9 @@ endif
 	$(DOCKER_COMPOSE) run --rm fetch
 
 clean:
-	docker rmi $(DOCKER_IMAGE)
+	$(DOCKER_COMPOSE) rm -fv ; \
+	docker rmi $$( docker images | grep -E '^$(PROJECT_NAME)_' | awk '{print $$1}' ) 2>/dev/null ||:
+	docker rmi -f $(DOCKER_IMAGE) 2>/dev/null ||:
 
 clean-bucket:
 	RM_OLDER_THAN="$(RM_OLDER_THAN)" $(DOCKER_COMPOSE) run --rm cleanup
@@ -70,15 +72,16 @@ endif
 ifndef AWS_S3_BUCKET
 	$(error AWS_S3_BUCKET is undefined)
 endif
-ifndef HOSTNAME
-	$(error HOSTNAME is undefined)
+ifndef S3HOSTNAME
+	$(error S3HOSTNAME is undefined)
 endif
 
 redirects: test-aws-env
 	docker build -t docsdockercom_redirects -f Dockerfile.redirects .
 	docker run \
+		--rm \
 		--env-file aws.env \
-		-e AWS_USER -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_S3_BUCKET -e HOSTNAME \
+		-e AWS_USER -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_S3_BUCKET -e S3HOSTNAME \
 		docsdockercom_redirects
 
 markdownlint:
@@ -87,7 +90,7 @@ markdownlint:
 htmllint:
 	docker exec -it docsdockercom_serve_1 /usr/local/bin/linkcheck http://127.0.0.1:8000
 
-all: clean build build-images serve
+all: clean build-images build serve
 
 # Sven doesn't have docker-compose installed on some boxes, so use a compose container
 compose:
@@ -99,17 +102,29 @@ compose:
 		-v /usr/bin/docker-static:/usr/bin/docker \
 		-w $(CURDIR) \
 		--entrypoint bash \
-			svendowideit/compose
+			docker/compose:1.5.0rc1
 
 
 auto:
-		docker run --rm -it \
-			--env-file aws.env \
-			-v $(CURDIR):$(CURDIR) \
-			-v /var/run/docker.sock:/var/run/docker.sock \
-			-v /usr/bin/docker-static:/usr/bin/docker \
-			-w $(CURDIR) \
-			--entrypoint make \
-				svendowideit/compose \
-						release
+	docker run --rm \
+		--env-file aws.env \
+		-v $(CURDIR):$(CURDIR) \
+		-v /var/run/docker.sock:/var/run/docker.sock \
+		-v /usr/bin/docker-static:/usr/bin/docker \
+		-w $(CURDIR) \
+		--entrypoint make \
+			docker/compose:1.5.0rc1 \
+					clean
+	make build-images
+	docker run --rm \
+		--env-file aws.env \
+		-v $(CURDIR):$(CURDIR) \
+		-v /var/run/docker.sock:/var/run/docker.sock \
+		-v /usr/bin/docker-static:/usr/bin/docker \
+		-w $(CURDIR) \
+		--entrypoint make \
+			docker/compose:1.5.0rc1 \
+					release
+	docker run --rm --env-file aws.env \
+		--entrypoint linkcheck $(DOCKER_IMAGE)
 
