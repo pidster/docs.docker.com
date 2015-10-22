@@ -20,12 +20,10 @@ fetch:
 
 build:
     image: docsdockercom:${IMAGE_TAG}
-    command: /bin/bash -ec "hugo -d /public/$$DOCS_VERSION"
+    command: "hugo -d /public/$DOCS_VERSION"
     working_dir: /docs
     volumes_from:
         - data
-    environment:
-        - DOCS_VERSION
 
 upload:
     image: docsdockercom:${IMAGE_TAG}
@@ -51,10 +49,7 @@ cleanup:
 serve:
     image: docsdockercom:${IMAGE_TAG}
     working_dir: /docs
-    command: /bin/bash -c "hugo server -d /public --port=8000 --baseUrl=$$HUGO_BASE_URL --bind=$$HUGO_BIND_IP"
-    environment:
-        - HUGO_BASE_URL
-        - HUGO_BIND_IP
+    command: "hugo server -d /public --port=8000 --baseUrl=$HUGO_BASE_URL --bind=0.0.0.0"
     ports:
         - "8000:8000"
     volumes_from:
@@ -63,11 +58,6 @@ serve:
 test:
     image: docsdockercom:${IMAGE_TAG}
     working_dir: /docs
-    command: /src/test.sh
-    environment:
-        - HUGO_BASE_URL
-        - HUGO_BIND_IP
-    ports:
-        - "8000:8000"
-    volumes_from:
-        - data
+    command: 'python /src/docvalidate.py http://serve:8000'
+    links:
+        - serve
