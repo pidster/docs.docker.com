@@ -12,10 +12,10 @@ cat <<HERE > s3_website.json
   "RoutingRules": [
 HERE
 
-#    { "Condition": { "KeyPrefixEquals": "jsearch/index.html" }, "Redirect": { "HostName": "$HOSTNAME", "ReplaceKeyPrefixWith": "jsearch/" } },
-grep --invert-match "^#" /src/redirects.csv | sed 's/\(.*\),\(.*\)/    { "Condition": { "KeyPrefixEquals": "\1" }, "Redirect": { "HostName": "$HOSTNAME", "ReplaceKeyPrefixWith": "\2" } },/' >> s3_website.json
+#    { "Condition": { "KeyPrefixEquals": "jsearch/index.html" }, "Redirect": { "HostName": "$S3HOSTNAME", "ReplaceKeyPrefixWith": "jsearch/" } },
+grep --invert-match "^#" /src/redirects.csv | sed 's/\(.*\),\(.*\)/    { "Condition": { "KeyPrefixEquals": "\1" }, "Redirect": { "HostName": "$S3HOSTNAME", "ReplaceKeyPrefixWith": "\2" } },/' >> s3_website.json
 # and one last one because amazone won't put up with trailing commas
-echo '    { "Condition": { "KeyPrefixEquals": "svendowideit" }, "Redirect": { "HostName": "$HOSTNAME", "ReplaceKeyPrefixWith": "examples/apt-cacher-ng/" } }' >> s3_website.json
+echo '    { "Condition": { "KeyPrefixEquals": "svendowideit" }, "Redirect": { "HostName": "$S3HOSTNAME", "ReplaceKeyPrefixWith": "examples/apt-cacher-ng/" } }' >> s3_website.json
 
 cat <<HERE >> s3_website.json
   ]
