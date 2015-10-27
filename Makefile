@@ -24,8 +24,7 @@ fetch:
 	$(DOCKER_COMPOSE) run --rm fetch
 
 clean:
-	$(DOCKER_COMPOSE) rm -fv ; \
-	docker rmi $$( docker images | grep -E '^$(PROJECT_NAME)_' | awk '{print $$1}' ) 2>/dev/null ||:
+	docker rmi $(DOCKER_IMAGE)
 
 clean-bucket:
 	RM_OLDER_THAN="$(RM_OLDER_THAN)" $(DOCKER_COMPOSE) run --rm cleanup
