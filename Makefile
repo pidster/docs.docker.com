@@ -73,9 +73,16 @@ redirects: test-aws-env
 	docker build -t docsdockercom_redirects -f Dockerfile.redirects .
 	docker run \
 		--rm \
-		--env-file aws.env \
 		-e AWS_USER -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_S3_BUCKET -e S3HOSTNAME \
 		docsdockercom_redirects
+
+redirects-env-file:
+	docker build -t docsdockercom_redirects -f Dockerfile.redirects .
+	docker run \
+		--rm \
+		--env-file aws.env \
+		docsdockercom_redirects
+
 
 markdownlint:
 	docker exec -it docsdockercom_serve_1 /usr/local/bin/markdownlint /docs/content/
