@@ -95,7 +95,7 @@ compose:
 		-v /usr/bin/docker-static:/usr/bin/docker \
 		-w $(CURDIR) \
 		--entrypoint bash \
-			docker/compose:1.5.0rc1
+			svendowideit/compose
 
 
 auto:
@@ -106,7 +106,7 @@ auto:
 		-v /usr/bin/docker-static:/usr/bin/docker \
 		-w $(CURDIR) \
 		--entrypoint make \
-			docker/compose:1.5.0rc1 \
+			svendowideit/compose \
 					clean
 	make build-images
 	docker run --rm \
@@ -116,7 +116,7 @@ auto:
 		-v /usr/bin/docker-static:/usr/bin/docker \
 		-w $(CURDIR) \
 		--entrypoint make \
-			docker/compose:1.5.0rc1 \
+			svendowideit/compose \
 					release
 	docker run --rm --env-file aws.env \
 		--entrypoint linkcheck $(DOCKER_IMAGE)
