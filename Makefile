@@ -37,6 +37,11 @@ clean:
 clean-bucket:
 	RM_OLDER_THAN="$(RM_OLDER_THAN)" $(DOCKER_COMPOSE) run --rm cleanup
 
+totally-clean-bucket:
+	docker run --rm \
+		-e AWS_USER -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_S3_BUCKET \
+		--entrypoint aws docs/base s3 rm --recursive s3://$(AWS_S3_BUCKET)
+
 serve: fetch
 	$(DOCKER_COMPOSE) up serve
 
