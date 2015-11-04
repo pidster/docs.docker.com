@@ -102,6 +102,9 @@ markdownlint:
 htmllint:
 	docker exec -it docsdockercom_serve_1 /usr/local/bin/linkcheck http://127.0.0.1:8000
 
+htmllint-s3:
+	docker run -e S3HOSTNAME --env-file aws.env $(DOCKER_IMAGE) /usr/local/bin/linkcheck
+
 all: clean build-images build serve
 
 # Sven doesn't have docker-compose installed on some boxes, so use a compose container
