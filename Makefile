@@ -100,7 +100,10 @@ htmllint:
 	docker exec -it docsdockercom_serve_1 /usr/local/bin/linkcheck http://127.0.0.1:8000
 
 htmllint-s3:
-	docker run -e S3HOSTNAME $(DOCKER_IMAGE) /usr/local/bin/linkcheck
+ifndef CHECKURL
+	$(error CHECKURL is undefined)
+endif
+	docker run $(DOCKER_IMAGE) /usr/local/bin/linkcheck $(CHECKURL)
 
 all: clean build-images build serve
 
