@@ -1,5 +1,10 @@
 .PHONY: all default build-images fetch clean clean-bucket test serve build release export shell
 
+-include aws.env
+
+show:
+	echo "S3HOSTNAME == $(S3HOSTNAME)"
+
 PROJECT_NAME ?= docsdockercom
 DOCKER_COMPOSE := docker-compose-1.5.0rc1 -p $(PROJECT_NAME)
 export IMAGE_TAG ?= $(shell git rev-parse --abbrev-ref HEAD)
@@ -88,14 +93,6 @@ redirects: test-aws-env
 		-e AWS_USER -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_S3_BUCKET -e S3HOSTNAME \
 		docsdockercom_redirects
 
-redirects-env-file:
-	docker build -t docsdockercom_redirects -f Dockerfile.redirects .
-	docker run \
-		--rm \
-		--env-file aws.env \
-		docsdockercom_redirects
-
-
 markdownlint:
 	docker exec -it docsdockercom_serve_1 /usr/local/bin/markdownlint /docs/content/
 
@@ -103,43 +100,7 @@ htmllint:
 	docker exec -it docsdockercom_serve_1 /usr/local/bin/linkcheck http://127.0.0.1:8000
 
 htmllint-s3:
-	docker run -e S3HOSTNAME --env-file aws.env $(DOCKER_IMAGE) /usr/local/bin/linkcheck
+	docker run -e S3HOSTNAME $(DOCKER_IMAGE) /usr/local/bin/linkcheck
 
 all: clean build-images build serve
-
-# Sven doesn't have docker-compose installed on some boxes, so use a compose container
-compose:
-	docker run --rm -it \
-		-e GITHUB_USERNAME -e GITHUB_TOKEN \
-		--env-file aws.env \
-		-v $(CURDIR):$(CURDIR) \
-		-v /var/run/docker.sock:/var/run/docker.sock \
-		-v /usr/bin/docker-static:/usr/bin/docker \
-		-w $(CURDIR) \
-		--entrypoint bash \
-			svendowideit/compose
-
-
-auto:
-	docker run --rm \
-		--env-file aws.env \
-		-v $(CURDIR):$(CURDIR) \
-		-v /var/run/docker.sock:/var/run/docker.sock \
-		-v /usr/bin/docker-static:/usr/bin/docker \
-		-w $(CURDIR) \
-		--entrypoint make \
-			svendowideit/compose \
-					clean
-	make build-images
-	docker run --rm \
-		--env-file aws.env \
-		-v $(CURDIR):$(CURDIR) \
-		-v /var/run/docker.sock:/var/run/docker.sock \
-		-v /usr/bin/docker-static:/usr/bin/docker \
-		-w $(CURDIR) \
-		--entrypoint make \
-			svendowideit/compose \
-					release
-	docker run --rm --env-file aws.env \
-		--entrypoint linkcheck $(DOCKER_IMAGE)
 

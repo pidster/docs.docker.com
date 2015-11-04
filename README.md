@@ -88,7 +88,8 @@ This project is builds and releases the documentation for all of Docker &ndash; 
 
     The above are example values of course. You'll need to use valid values to publish.
 
-    Alternativly, you can set the values in a `aws.env` file next to the Makefile in `docs.docker.com`.
+    Alternativly, you can set the values in a `aws.env` file beside the Makefile in `docs.docker.com`.
+    The Makefile will altomatically include any values that are set in this file.
     The environment variables you can set include:
 
         AWS_USER=sven
@@ -100,11 +101,6 @@ This project is builds and releases the documentation for all of Docker &ndash; 
         S3HOSTNAME=sven.s3-website-us-east-1.amazonaws.com
         CHECKURL=http://sven.s3-website-us-east-1.amazonaws.com
         RELEASE_LATEST=1
-
-	If you use this file, you may need to import those into your current shell
-    which you can do by running:
-
-        $ export $(cat aws.env)
 
 6. Clean any old images from previous passes.
 
@@ -129,8 +125,6 @@ This project is builds and releases the documentation for all of Docker &ndash; 
 
         $ make redirects
 
-    Or, if you're using an `aws.env` file, run `make redirects-env-file`
-        
 10. Optionally, check for new or updated bucket.
 
         $ aws s3 ls s3://$AWS_S3_BUCKET/
