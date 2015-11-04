@@ -6,7 +6,7 @@ show:
 	echo "S3HOSTNAME == $(S3HOSTNAME)"
 
 PROJECT_NAME ?= docsdockercom
-DOCKER_COMPOSE := docker-compose-1.5.0rc1 -p $(PROJECT_NAME)
+DOCKER_COMPOSE := docker-compose -p $(PROJECT_NAME)
 export IMAGE_TAG ?= $(shell git rev-parse --abbrev-ref HEAD)
 DOCKER_IMAGE := docsdockercom:$(IMAGE_TAG)
 DOCKER_IP = $(shell python -c "import urlparse ; print urlparse.urlparse('$(DOCKER_HOST)').hostname or ''")
@@ -32,7 +32,9 @@ endif
 ifndef GITHUB_TOKEN
 	$(error GITHUB_TOKEN is undefined)
 endif
-	$(DOCKER_COMPOSE) run --rm fetch
+	$(DOCKER_COMPOSE) run --rm \
+		  -e S3HOSTNAME=$(S3HOSTNAME) \
+		fetch
 
 clean:
 	$(DOCKER_COMPOSE) rm -fv ; \
@@ -51,16 +53,29 @@ serve: fetch
 	$(DOCKER_COMPOSE) up serve
 
 build: fetch
-	$(DOCKER_COMPOSE) run --rm build
+	$(DOCKER_COMPOSE) run --rm \
+		  -e S3HOSTNAME=$(S3HOSTNAME) \
+		build
 
-release: build test-aws-env
-	CLEAN=$(DOCS_VERSION) $(DOCKER_COMPOSE) rm --rm upload
+release: build test-aws-env upload
+
+upload:
+	CLEAN=$(DOCS_VERSION) $(DOCKER_COMPOSE) run --rm \
+		  -e AWS_USER=$(AWS_USER) \
+		  -e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+		  -e AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
+		  -e AWS_S3_BUCKET=$(AWS_S3_BUCKET) \
+		  -e S3HOSTNAME=$(S3HOSTNAME) \
+		  -e CLEAN=$(CLEAN) \
+		  upload
 
 export: build
 	docker cp $$($(DATA_CONTAINER_CMD)):/public - | gzip > docs-docker-com.tar.gz
 
 shell: build
-	$(DOCKER_COMPOSE) run --rm build /bin/bash
+	$(DOCKER_COMPOSE) run --rm \
+		  -e S3HOSTNAME=$(S3HOSTNAME) \
+		build /bin/bash
 
 test:
 	$(DOCKER_COMPOSE) up -d serve
