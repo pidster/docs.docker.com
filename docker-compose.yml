@@ -20,7 +20,7 @@ fetch:
 
 build:
     image: docsdockercom:latest
-    command: /bin/bash -ec "hugo -d /public/$DOCS_VERSION --config=config.toml"
+    command: /src/build.sh
     working_dir: /docs
     volumes_from:
         - data

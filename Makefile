@@ -1,5 +1,7 @@
 .PHONY: all default build-images fetch clean clean-bucket test serve build release export shell
 
+-include aws.env
+
 PROJECT_NAME ?= docsdockercom
 DOCKER_COMPOSE := docker-compose -p $(PROJECT_NAME)
 DOCKER_IMAGE := docsdockercom:latest
@@ -46,7 +48,10 @@ serve: fetch
 	HUGO_BIND_IP=$(HUGO_BIND_IP) HUGO_BASE_URL=$(HUGO_BASE_URL) $(DOCKER_COMPOSE) up serve
 
 build: fetch
-	DOCS_VERSION=$(DOCS_VERSION) $(DOCKER_COMPOSE) up build
+	DOCS_VERSION=$(DOCS_VERSION) $(DOCKER_COMPOSE) run --rm \
+				 -e S3HOSTNAME=$(S3HOSTNAME) \
+				 -e DOCS_VERSION=$(DOCS_VERSION) \
+				 build
 
 release: build test-aws-env
 	CLEAN=$(DOCS_VERSION) $(DOCKER_COMPOSE) up upload
