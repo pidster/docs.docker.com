@@ -39,7 +39,7 @@ serve:
 		  -p 8000:8000 \
 		  -w /docs/ \
 		  $(DOCKER_IMAGE) \
-		  hugo server -d /public --port=8000 --baseUrl=$(HUGO_BASE_URL) --bind=0.0.0.0 --config=config.toml
+		  hugo server -d /public --port=8000 --watch --baseUrl=$(HUGO_BASE_URL) --bind=0.0.0.0 --config=config.toml
 
 build:
 	docker run --rm \

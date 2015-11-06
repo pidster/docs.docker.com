@@ -9,7 +9,7 @@ defaults:
 
 projects:
     - name: docs-base
-      org: docker
+      org: SvenDowideit
       ref: hugo-github-linking
       path: !!null
       target: .
@@ -28,6 +28,13 @@ projects:
       repo_name: dhe-deploy
       ref: docs
       path: docs/
+
+    - name: docker-trusted-registry-api
+      org: SvenDowideit
+      repo_name: dhe-deploy
+      ref: add-swagger-to-docs
+      target: "content/apidocs/docker-trusted-registry"
+      path: apidocgen/output
 
     - name: registry
       repo_name: distribution
