@@ -2,5 +2,5 @@
 
 set -e
 
-echo "RUNNING: hugo -d /public/$DOCS_VERSION --baseUrl=$S3HOSTNAME --config=config.toml"
-hugo -d /public/$DOCS_VERSION --baseUrl="http://$S3HOSTNAME" --config=config.toml
+echo "RUNNING: hugo -d /public/$DOCS_VERSION --baseUrl=http://$S3HOSTNAME/$DOCS_VERSION --config=config.toml"
+hugo -d /public/$DOCS_VERSION --baseUrl=http://$S3HOSTNAME/$DOCS_VERSION --config=config.toml

@@ -5,12 +5,8 @@
 show:
 	echo "S3HOSTNAME == $(S3HOSTNAME)"
 
-PROJECT_NAME ?= docsdockercom
 export IMAGE_TAG ?= $(shell git rev-parse --abbrev-ref HEAD)
 DOCKER_IMAGE := docsdockercom:$(IMAGE_TAG)
-DOCKER_IP = $(shell python -c "import urlparse ; print urlparse.urlparse('$(DOCKER_HOST)').hostname or ''")
-export HUGO_BASE_URL = $(shell test -z "$(DOCKER_IP)" && echo localhost || echo "$(DOCKER_IP)")
-DATA_CONTAINER_CMD = $(DOCKER_COMPOSE) ps -q data | head -n 1
 RELEASE_LATEST ?=
 
 ifndef RELEASE_LATEST
@@ -21,9 +17,10 @@ endif
 
 default: build-images build
 
-build-images:
-	docker build -t $(DOCKER_IMAGE) .
+build-images: fetch
+#	docker build -t $(DOCKER_IMAGE) .
 
+# The result of this step should become a hub image that the Docker projects can use for local testing
 fetch:
 ifndef GITHUB_USERNAME
 	$(error GITHUB_USERNAME is undefined)
@@ -31,57 +28,61 @@ endif
 ifndef GITHUB_TOKEN
 	$(error GITHUB_TOKEN is undefined)
 endif
-	$(DOCKER_COMPOSE) run --rm \
-		  -e S3HOSTNAME=$(S3HOSTNAME) \
-		fetch
+	docker build \
+		-t $(DOCKER_IMAGE) \
+		--build-arg GITHUB_USERNAME=$(GITHUB_TOKEN) \
+		--build-arg GITHUB_TOKEN=$(GITHUB_TOKEN) \
+		.
 
-clean:
-	$(DOCKER_COMPOSE) rm -fv ; \
-	docker rmi $$( docker images | grep -E '^$(PROJECT_NAME)_' | awk '{print $$1}' ) 2>/dev/null ||:
-	docker rmi -f $(DOCKER_IMAGE) 2>/dev/null ||:
-
-clean-bucket:
-	RM_OLDER_THAN="$(RM_OLDER_THAN)" $(DOCKER_COMPOSE) run --rm cleanup
-
-totally-clean-bucket:
+serve:
 	docker run --rm \
-		-e AWS_USER -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_S3_BUCKET \
-		--entrypoint aws docs/base s3 rm --recursive s3://$(AWS_S3_BUCKET)
+		  -p 8000:8000 \
+		  -w /docs/ \
+		  $(DOCKER_IMAGE) \
+		  hugo server -d /public --port=8000 --baseUrl=$(HUGO_BASE_URL) --bind=0.0.0.0 --config=config.toml
 
-serve: fetch
-	$(DOCKER_COMPOSE) up serve
-
-build: fetch
-	$(DOCKER_COMPOSE) run --rm \
+build:
+	docker run --rm \
 		  -e S3HOSTNAME=$(S3HOSTNAME) \
-		build
+		  -w /docs/ \
+		  $(DOCKER_IMAGE) \
+		  /src/build.sh
 
 release: build test-aws-env upload
 
 upload:
-	CLEAN=$(DOCS_VERSION) $(DOCKER_COMPOSE) run --rm \
+	docker run --rm \
+		-e CLEAN=$(DOCS_VERSION) \
 		  -e AWS_USER=$(AWS_USER) \
 		  -e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
 		  -e AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
 		  -e AWS_S3_BUCKET=$(AWS_S3_BUCKET) \
 		  -e S3HOSTNAME=$(S3HOSTNAME) \
-		  -e CLEAN=$(CLEAN) \
-		  upload
+		  -w /docs/ \
+		  $(DOCKER_IMAGE) \
+		  /src/build_and_upload.sh
 
 export: build
 	docker cp $$($(DATA_CONTAINER_CMD)):/public - | gzip > docs-docker-com.tar.gz
 
-shell: build
-	$(DOCKER_COMPOSE) run --rm \
+shell:
+	docker run --rm -it \
+		  -p 8000:8000 \
+		  -w /docs/ \
 		  -e S3HOSTNAME=$(S3HOSTNAME) \
-		build /bin/bash
+		  $(DOCKER_IMAGE) \
+			/bin/bash
 
 test:
-	$(DOCKER_COMPOSE) up -d serve
+	docker run -d \
+		  --name test-docs.docker.com-server \
+		  -w /docs/ \
+		  $(DOCKER_IMAGE) \
+		  hugo server -d /public --port=8000 --baseUrl=$(HUGO_BASE_URL) --bind=0.0.0.0 --config=config.toml
 	sleep 2
-	$(DOCKER_COMPOSE) run --rm test bash
-	$(DOCKER_COMPOSE) stop
-	$(DOCKER_COMPOSE) rm -f serve
+	docker exec test-docs.docker.com-server linkcheck http://localhost:8000
+	docker logs test-docs.docker.com-server
+	docker rm -vf test-docs.docker.com-server
 
 test-aws-env:
 ifndef AWS_USER 
@@ -104,8 +105,36 @@ redirects: test-aws-env
 	docker build -t docsdockercom_redirects -f Dockerfile.redirects .
 	docker run \
 		--rm \
-		-e AWS_USER -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_S3_BUCKET -e S3HOSTNAME \
+		  -e S3HOSTNAME=$(S3HOSTNAME) \
+		  -e AWS_USER=$(AWS_USER) \
+   		  -e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+	      -e AWS_SECRET_ACCESS_KEY=$(WS_SECRET_ACCESS_KEY) \
+		  -e AWS_S3_BUCKET=$(AWS_S3_BUCKET) \
 		docsdockercom_redirects
+
+clean:
+	docker rmi -f $(DOCKER_IMAGE) 2>/dev/null ||:
+
+clean-bucket:
+	docker run --rm \
+		  -e S3HOSTNAME=$(S3HOSTNAME) \
+		  -e AWS_USER=$(AWS_USER) \
+   		  -e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+	      -e AWS_SECRET_ACCESS_KEY=$(WS_SECRET_ACCESS_KEY) \
+		  -e AWS_S3_BUCKET=$(AWS_S3_BUCKET) \
+		  -e RM_OLDER_THAN=$(RM_OLDER_THAN) \
+		  -w /docs/ \
+		  $(DOCKER_IMAGE) \
+		  /src/cleanup.sh
+
+totally-clean-bucket:
+	docker run --rm \
+		  -e S3HOSTNAME=$(S3HOSTNAME) \
+		  -e AWS_USER=$(AWS_USER) \
+   		  -e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+	      -e AWS_SECRET_ACCESS_KEY=$(WS_SECRET_ACCESS_KEY) \
+		  -e AWS_S3_BUCKET=$(AWS_S3_BUCKET) \
+		--entrypoint aws docs/base s3 rm --recursive s3://$(AWS_S3_BUCKET)
 
 markdownlint:
 	docker exec -it docsdockercom_serve_1 /usr/local/bin/markdownlint /docs/content/

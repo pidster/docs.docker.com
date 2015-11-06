@@ -9,4 +9,4 @@ fi
 if [ -n "$CLEAN" ] ; then
   aws s3 rm --recursive s3://$AWS_S3_BUCKET/$CLEAN
 fi
-aws s3 sync --acl=public-read . s3://$AWS_S3_BUCKET
+aws s3 sync --acl=public-read /public/ s3://$AWS_S3_BUCKET
