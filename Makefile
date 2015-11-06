@@ -2,7 +2,7 @@
 
 PROJECT_NAME ?= docsdockercom
 DOCKER_COMPOSE := docker-compose-1.5.0rc1 -p $(PROJECT_NAME)
-export IMAGE_TAG ?= $(shell git rev-parse --short HEAD)
+export IMAGE_TAG ?= $(shell git rev-parse --abbrev-ref HEAD)
 DOCKER_IMAGE := docsdockercom:$(IMAGE_TAG)
 DOCKER_IP = $(shell python -c "import urlparse ; print urlparse.urlparse('$(DOCKER_HOST)').hostname or ''")
 export HUGO_BASE_URL = $(shell test -z "$(DOCKER_IP)" && echo localhost || echo "$(DOCKER_IP)")
