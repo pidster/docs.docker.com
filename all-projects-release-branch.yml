@@ -1,6 +1,6 @@
 defaults:
     org: docker
-    ref: master
+    ref: docs
     path: docs
     repo_name: "{name}"
     name: "{repo_name}"

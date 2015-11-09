@@ -1,0 +1,21 @@
+FROM debian:jessie
+MAINTAINER Sven Dowideit <SvenDowideit@docker.com> (@SvenDowideit)
+
+RUN apt-get update \
+	&& apt-get install -y \
+		gettext \
+		git \
+		libssl-dev \
+		make \
+		python-dev \
+		python-pip \
+		python-setuptools \
+		vim-tiny
+
+RUN pip install awscli==1.4.4 pyopenssl==0.12
+
+ADD update-redirects.sh /src/update-redirects.sh
+ADD redirects.csv /src/redirects.csv
+WORKDIR /src/
+
+CMD /src/update-redirects.sh

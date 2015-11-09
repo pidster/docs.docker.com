@@ -7,23 +7,22 @@ data:
 
 fetch:
     image: docsdockercom:${IMAGE_TAG}
-    command: |
-        /bin/bash -ec " \
-        python fetch_content.py /docs all-projects.yml
-        ./touch-up.sh /docs
-        "
+    command: "./fetch_content.py /docs all-projects.yml"
     volumes_from:
         - data
     environment:
         - GITHUB_USERNAME
         - GITHUB_TOKEN
+        - S3HOSTNAME
 
 build:
     image: docsdockercom:${IMAGE_TAG}
-    command: "hugo -d /public/$DOCS_VERSION"
+    command: /src/build.sh
     working_dir: /docs
     volumes_from:
         - data
+    environment:
+        - S3HOSTNAME
 
 upload:
     image: docsdockercom:${IMAGE_TAG}
@@ -36,6 +35,7 @@ upload:
         - AWS_ACCESS_KEY_ID
         - AWS_SECRET_ACCESS_KEY
         - AWS_S3_BUCKET
+        - S3HOSTNAME
 
 cleanup:
     image: docsdockercom:${IMAGE_TAG}
@@ -49,7 +49,7 @@ cleanup:
 serve:
     image: docsdockercom:${IMAGE_TAG}
     working_dir: /docs
-    command: "hugo server -d /public --port=8000 --baseUrl=$HUGO_BASE_URL --bind=0.0.0.0"
+    command: "hugo server -d /public --port=8000 --baseUrl=$HUGO_BASE_URL --bind=0.0.0.0 --config=config.toml"
     ports:
         - "8000:8000"
     volumes_from:
@@ -58,6 +58,6 @@ serve:
 test:
     image: docsdockercom:${IMAGE_TAG}
     working_dir: /docs
-    command: 'python /src/docvalidate.py http://serve:8000'
+    command: '/src/docvalidate.py http://serve:8000'
     links:
         - serve
