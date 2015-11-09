@@ -84,24 +84,9 @@ This project is builds and releases the documentation for all of Docker &ndash; 
         $ export AWS_ACCESS_KEY_ID=AKIAIKGKXQ3QTG3QY1SY
         $ export AWS_SECRET_ACCESS_KEY=qFlobtw3yYXdtEppahJAZKoNcDUXleTKB23kFR6c
         $ export AWS_S3_BUCKET=docs-manthony
-        $ export S3HOSTNAME=mary.docs.test.s3-website-us-west-2.amazonaws.com
-
-    The above are example values of course. You'll need to use valid values to publish.
-
-    Alternativly, you can set the values in a `aws.env` file beside the Makefile in `docs.docker.com`.
-    The Makefile will altomatically include any values that are set in this file.
-    The environment variables you can set include:
-
-        AWS_USER=sven
-        AWS_ACCESS_KEY_ID=KAZ7ZFJNLA
-        AWS_SECRET_ACCESS_KEY=geMzVXko+j2jfye9Sa4J
-        AWS_S3_BUCKET=sven
-        GITHUB_TOKEN=3a5dec0bda7634176339
-        GITHUB_USERNAME=SvenDowideit
-        S3HOSTNAME=sven.s3-website-us-east-1.amazonaws.com
-        CHECKURL=http://sven.s3-website-us-east-1.amazonaws.com
-        RELEASE_LATEST=1
-
+      
+    The above are example values of course. You'll need to use valid values to publish.  
+    
 6. Clean any old images from previous passes.
 
         $ make clean
@@ -117,14 +102,7 @@ This project is builds and releases the documentation for all of Docker &ndash; 
 9. Release to the subfolder (created if it doesn't exist).
 
         $ make release     
-
-9a. Re-set the s3 redirects
-
-    The `make release` command also sets up the redirects, but if you need to
-    update them separatly, you can run:
-
-        $ make redirects
-
+        
 10. Optionally, check for new or updated bucket.
 
         $ aws s3 ls s3://$AWS_S3_BUCKET/

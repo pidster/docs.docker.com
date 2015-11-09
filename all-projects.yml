@@ -1,6 +1,6 @@
 defaults:
     org: docker
-    ref: master
+    ref: docs
     path: docs
     repo_name: "{name}"
     name: "{repo_name}"
@@ -10,13 +10,14 @@ defaults:
 projects:
     - name: docs-base
       org: docker
-      ref: hugo-github-linking
+      ref: master
       path: !!null
       target: .
 
     - name: docker
       org: docker
-      target: content/engine
+      ref: docs
+      target: content/
       path: docs/
 
     - name: docker-hub
@@ -31,25 +32,31 @@ projects:
 
     - name: registry
       repo_name: distribution
-      ref: master
+      ref: release/2.1
       path: docs/
 
     - name: kitematic
       org: kitematic
+      ref: master
       path: docs/
 
     - name: compose
+      ref: docs
       path: docs/
 
     - name: swarm
+      ref: docs
       path: docs/
 
     - name: machine
+      ref: docs
       path: docs/
 
     - name: opensource
+      ref: master
       path: docs/
 
     - name: tutorials
+      ref: master
       target: content
       path: docs/
