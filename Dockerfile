@@ -8,16 +8,7 @@ WORKDIR /src
 EXPOSE 8000
 
 RUN apt-get update \
-	&& apt-get install -y \
-		gettext \
-		git \
-		libssl-dev \
-		make \
-		python-dev \
-		python-pip \
-		python-setuptools \
-		vim-tiny \
-		s3cmd \
+	&& apt-get install -y gettext git libssl-dev make python-dev python-pip python-setuptools vim-tiny s3cmd \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
