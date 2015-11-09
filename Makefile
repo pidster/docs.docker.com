@@ -36,49 +36,50 @@ endif
 
 serve:
 	docker run --rm \
-		  -p 8000:8000 \
-		  -w /docs/ \
-		  $(DOCKER_IMAGE) \
-		  hugo server -d /public --port=8000 --watch --baseUrl=$(HUGO_BASE_URL) --bind=0.0.0.0 --config=config.toml
+		-p 8000:8000 \
+		-w /docs/ \
+		$(DOCKER_IMAGE) \
+		hugo server -d /public --port=8000 --watch --baseUrl=$(HUGO_BASE_URL) --bind=0.0.0.0 --config=config.toml
 
 build:
 	docker run --rm \
-		  -e S3HOSTNAME=$(S3HOSTNAME) \
-		  -w /docs/ \
-		  $(DOCKER_IMAGE) \
-		  /src/build.sh
+		-e S3HOSTNAME=$(S3HOSTNAME) \
+		-w /docs/ \
+		$(DOCKER_IMAGE) \
+		/src/build.sh
 
 release: build test-aws-env upload
 
 upload:
 	docker run --rm \
 		-e CLEAN=$(DOCS_VERSION) \
-		  -e AWS_USER=$(AWS_USER) \
-		  -e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
-		  -e AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
-		  -e AWS_S3_BUCKET=$(AWS_S3_BUCKET) \
-		  -e S3HOSTNAME=$(S3HOSTNAME) \
-		  -w /docs/ \
-		  $(DOCKER_IMAGE) \
-		  /src/build_and_upload.sh
+		-e AWS_USER=$(AWS_USER) \
+		-e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+		-e AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
+		-e AWS_S3_BUCKET=$(AWS_S3_BUCKET) \
+		-e S3HOSTNAME=$(S3HOSTNAME) \
+		-w /docs/ \
+		$(DOCKER_IMAGE) \
+		/src/build_and_upload.sh
 
 export: build
 	docker cp $$($(DATA_CONTAINER_CMD)):/public - | gzip > docs-docker-com.tar.gz
 
 shell:
 	docker run --rm -it \
-		  -p 8000:8000 \
-		  -w /docs/ \
-		  -e S3HOSTNAME=$(S3HOSTNAME) \
-		  $(DOCKER_IMAGE) \
+		-p 8000:8000 \
+		-w /docs/ \
+		-e S3HOSTNAME=$(S3HOSTNAME) \
+		$(DOCKER_IMAGE) \
 			/bin/bash
 
 test:
+	docker rm -vf test-docs.docker.com-server ||:
 	docker run -d \
-		  --name test-docs.docker.com-server \
-		  -w /docs/ \
-		  $(DOCKER_IMAGE) \
-		  hugo server -d /public --port=8000 --baseUrl=$(HUGO_BASE_URL) --bind=0.0.0.0 --config=config.toml
+		--name test-docs.docker.com-server \
+		-w /docs/ \
+		$(DOCKER_IMAGE) \
+		hugo server -d /public --port=8000 --baseUrl=$(HUGO_BASE_URL) --bind=0.0.0.0 --config=config.toml
 	sleep 2
 	docker exec test-docs.docker.com-server linkcheck http://localhost:8000
 	docker logs test-docs.docker.com-server
@@ -105,11 +106,11 @@ redirects: test-aws-env
 	docker build -t docsdockercom_redirects -f Dockerfile.redirects .
 	docker run \
 		--rm \
-		  -e S3HOSTNAME=$(S3HOSTNAME) \
-		  -e AWS_USER=$(AWS_USER) \
-   		  -e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
-	      -e AWS_SECRET_ACCESS_KEY=$(WS_SECRET_ACCESS_KEY) \
-		  -e AWS_S3_BUCKET=$(AWS_S3_BUCKET) \
+		-e S3HOSTNAME=$(S3HOSTNAME) \
+		-e AWS_USER=$(AWS_USER) \
+		-e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+		-e AWS_SECRET_ACCESS_KEY=$(WS_SECRET_ACCESS_KEY) \
+		-e AWS_S3_BUCKET=$(AWS_S3_BUCKET) \
 		docsdockercom_redirects
 
 clean:
@@ -117,30 +118,27 @@ clean:
 
 clean-bucket:
 	docker run --rm \
-		  -e S3HOSTNAME=$(S3HOSTNAME) \
-		  -e AWS_USER=$(AWS_USER) \
-   		  -e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
-	      -e AWS_SECRET_ACCESS_KEY=$(WS_SECRET_ACCESS_KEY) \
-		  -e AWS_S3_BUCKET=$(AWS_S3_BUCKET) \
-		  -e RM_OLDER_THAN=$(RM_OLDER_THAN) \
-		  -w /docs/ \
-		  $(DOCKER_IMAGE) \
-		  /src/cleanup.sh
+		-e S3HOSTNAME=$(S3HOSTNAME) \
+		-e AWS_USER=$(AWS_USER) \
+		-e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+		-e AWS_SECRET_ACCESS_KEY=$(WS_SECRET_ACCESS_KEY) \
+		-e AWS_S3_BUCKET=$(AWS_S3_BUCKET) \
+		-e RM_OLDER_THAN=$(RM_OLDER_THAN) \
+		-w /docs/ \
+		$(DOCKER_IMAGE) \
+		/src/cleanup.sh
 
 totally-clean-bucket:
 	docker run --rm \
-		  -e S3HOSTNAME=$(S3HOSTNAME) \
-		  -e AWS_USER=$(AWS_USER) \
-   		  -e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
-	      -e AWS_SECRET_ACCESS_KEY=$(WS_SECRET_ACCESS_KEY) \
-		  -e AWS_S3_BUCKET=$(AWS_S3_BUCKET) \
+		-e S3HOSTNAME=$(S3HOSTNAME) \
+		-e AWS_USER=$(AWS_USER) \
+		-e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+		-e AWS_SECRET_ACCESS_KEY=$(WS_SECRET_ACCESS_KEY) \
+		-e AWS_S3_BUCKET=$(AWS_S3_BUCKET) \
 		--entrypoint aws docs/base s3 rm --recursive s3://$(AWS_S3_BUCKET)
 
 markdownlint:
-	docker exec -it docsdockercom_serve_1 /usr/local/bin/markdownlint /docs/content/
-
-htmllint:
-	docker exec -it docsdockercom_serve_1 /usr/local/bin/linkcheck http://127.0.0.1:8000
+	docker run --rm $(DOCKER_IMAGE) /usr/local/bin/markdownlint /docs/content/
 
 htmllint-s3:
 ifndef CHECKURL
