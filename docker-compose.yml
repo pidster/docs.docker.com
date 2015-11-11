@@ -26,6 +26,7 @@ build:
         - data
     environment:
         - DOCS_VERSION
+        - S3HOSTNAME
 
 upload:
     image: docsdockercom:latest
