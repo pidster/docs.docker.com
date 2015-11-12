@@ -29,6 +29,11 @@ projects:
       ref: docs
       path: docs/
 
+    - name: apidocs
+      repo_name: dhe-deploy
+      ref: master
+      path: apidocgen/output/
+
     - name: registry
       repo_name: distribution
       ref: master

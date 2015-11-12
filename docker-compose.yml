@@ -22,6 +22,7 @@ build:
     volumes_from:
         - data
     environment:
+        - DOCS_VERSION
         - S3HOSTNAME
 
 upload:
