@@ -32,7 +32,7 @@ projects:
     - name: apidocs
       repo_name: dhe-deploy
       ref: master
-      path: apidocgen/output/
+      path: apidocgen/output/docker-trusted-registry/
 
     - name: registry
       repo_name: distribution
